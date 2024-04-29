@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '/helper/modals.dart';
+import 'package:fluxswap/helper/modals.dart';
 
 class SwapInfoResponse {
   String status;

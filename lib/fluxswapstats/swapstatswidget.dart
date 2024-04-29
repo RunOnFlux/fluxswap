@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'swapstats.dart';
+import 'package:fluxswap/fluxswapstats/swapstats.dart';
 
 class SwapStatsWidget extends StatelessWidget {
   final SwapStats stats;
 
-  SwapStatsWidget({Key? key, required this.stats}) : super(key: key);
+  const SwapStatsWidget({super.key, required this.stats});
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 5, // Number of columns
         crossAxisSpacing: 10, // Horizontal space between cards
         mainAxisSpacing: 10, // Vertical space between cards
@@ -42,8 +42,9 @@ class SwapStatsWidget extends StatelessWidget {
           'Swaps from BSC: ${stats.data.swapsFromBSC}',
         ];
 
-        if (index >= titles.length)
+        if (index >= titles.length) {
           return Container(); // Guard for out-of-bounds
+        }
 
         return Card(
           child: Center(
@@ -59,6 +60,8 @@ class SwapStatsWidget extends StatelessWidget {
 }
 
 class SwapStatsScreen extends StatefulWidget {
+  const SwapStatsScreen({super.key});
+
   @override
   _SwapStatsScreenState createState() => _SwapStatsScreenState();
 }
@@ -76,7 +79,7 @@ class _SwapStatsScreenState extends State<SwapStatsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Swap Statistics"),
+        title: const Text("Swap Statistics"),
       ),
       body: FutureBuilder<SwapStats>(
         future: futureSwapStats,

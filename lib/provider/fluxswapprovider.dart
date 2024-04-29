@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_web3/flutter_web3.dart';
-import '/metamask/fluxamount.dart';
-import '/fees/fees.dart';
-import '/helper/modals.dart';
+import 'package:fluxswap/web3/fluxamount.dart';
+import 'package:fluxswap/api/swapinfo.dart';
+import 'package:fluxswap/helper/modals.dart';
 
 class ContractInfo {
   final int chain;
@@ -15,7 +15,7 @@ class ContractInfo {
 }
 
 // ignore: constant_identifier_names
-enum Coin { FLUX, ETH, BSC, AVAX, MATIC }
+enum Coin { FLUX, ETH, BSC, AVAX, MATIC, BASE }
 
 class CoinDetails {
   static const Map<Coin, ContractInfo> details = {
@@ -39,6 +39,10 @@ class CoinDetails {
       chain: 137,
       contractAddress: "0xA2bb7A68c46b53f6BbF6cC91C865Ae247A82E99B",
     ),
+    Coin.BASE: ContractInfo(
+      chain: 8453,
+      contractAddress: "0xb008bdcf9cdff9da684a190941dc3dca8c2cdd44",
+    ),
   };
 
   static ContractInfo getInfo(Coin coin) {
@@ -57,13 +61,15 @@ class FluxSwapProvider extends ChangeNotifier {
   bool get isEnabled => ethereum != null;
   bool get isInOperatingChain => currentChain == operatingChain;
   bool get isConnected => isEnabled && currentAddress.isNotEmpty;
+  String selectedChain = metamaskNetworks.entries.first.key;
+  String previousSelectedChain = metamaskNetworks.entries.first.key;
 
   // App Variables
   String selectedFromCurrency = 'FLUX';
   String selectedToCurrency = 'FLUX-ETH';
   String fluxID = '';
   double fromAmount = 100;
-  double toAmount = 0;
+  double toAmount = 90;
   String _fromAddress = '';
   String _toAddress = '';
 
@@ -129,7 +135,7 @@ class FluxSwapProvider extends ChangeNotifier {
     return toAmount;
   }
 
-  Future<void> connect() async {
+  Future<void> connectMetamask() async {
     if (isEnabled) {
       final accs = await ethereum!.requestAccount();
       account = accs[0];
@@ -138,10 +144,53 @@ class FluxSwapProvider extends ChangeNotifier {
 
       currentChain = await ethereum!.getChainId();
 
+      if (chainIds.containsKey(currentChain)) {
+        selectedChain = chainIds[currentChain]!;
+        previousSelectedChain = selectedChain;
+      }
+
       getBalance();
       getFluxTokenBalance(currentChain);
 
       notifyListeners();
+    }
+  }
+
+  Future<void> requestChangeChainMetamask() async {
+    if (isEnabled) {
+      try {
+        await ethereum!
+            .walletSwitchChain(metamaskNetworks[selectedChain]!.chainId);
+      } on EthereumUnrecognizedChainException {
+        try {
+          await ethereum!.walletAddChain(
+              chainId: metamaskNetworks[selectedChain]!.chainId,
+              chainName: selectedChain,
+              nativeCurrency: metamaskNetworks[selectedChain]!.currencyParams,
+              rpcUrls: metamaskNetworks[selectedChain]!.rpcurls,
+              blockExplorerUrls:
+                  metamaskNetworks[selectedChain]!.blockexplorerurls);
+        } on EthereumUserRejected {
+          selectedChain = previousSelectedChain;
+          notifyListeners();
+        }
+      } on EthereumException {
+        try {
+          await ethereum!.walletAddChain(
+              chainId: metamaskNetworks[selectedChain]!.chainId,
+              chainName: selectedChain,
+              nativeCurrency: metamaskNetworks[selectedChain]!.currencyParams,
+              rpcUrls: metamaskNetworks[selectedChain]!.rpcurls,
+              blockExplorerUrls:
+                  metamaskNetworks[selectedChain]!.blockexplorerurls);
+        } on EthereumUserRejected {
+          selectedChain = previousSelectedChain;
+          notifyListeners();
+        }
+      } on EthereumUserRejected {
+        selectedChain = previousSelectedChain;
+        notifyListeners();
+      }
     }
   }
 
@@ -274,6 +323,7 @@ class FluxSwapProvider extends ChangeNotifier {
       });
       ethereum!.onChainChanged((accounts) {
         clear();
+        connectMetamask();
       });
     }
   }

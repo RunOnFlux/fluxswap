@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'swapstats.dart';
-import 'swapstatswidget.dart';
+import 'package:fluxswap/fluxswapstats/swapstats.dart';
+import 'package:fluxswap/fluxswapstats/swapstatswidget.dart';
 
 class SwapStatsScreen extends StatefulWidget {
+  const SwapStatsScreen({super.key});
+
   @override
   _SwapStatsScreenState createState() => _SwapStatsScreenState();
 }

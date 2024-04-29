@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fluxswap/dialogs/approveswapdialog.dart';
+import 'package:fluxswap/fluxexchangepage/dialogs/approveswapdialog.dart';
 import 'package:fluxswap/provider/fluxswapprovider.dart';
 import 'package:provider/provider.dart';
-import '../api/requests.dart';
+import 'package:fluxswap/api/requests.dart';
 
 class ReserveSwapButton extends StatelessWidget {
   final GlobalKey<FormState> formKey;

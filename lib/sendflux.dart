@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluxswap/fees/fees.dart';
+import 'package:fluxswap/api/swapinfo.dart';
+import 'package:fluxswap/api/requests.dart';
 import 'package:fluxswap/helper/modals.dart';
 import 'package:provider/provider.dart';
-import 'provider/fluxswapprovider.dart';
-import 'fees/fees.dart';
-import 'api/requests.dart';
+import 'package:fluxswap/provider/fluxswapprovider.dart';
 
 class SwapCard extends StatefulWidget {
   const SwapCard({
@@ -29,8 +28,8 @@ class _SwapCardState extends State<SwapCard> {
         borderRadius: BorderRadius.circular(30),
       ),
       elevation: 15,
-      shadowColor: Colors.black,
-      color: const Color.fromARGB(255, 10, 17, 32),
+      // shadowColor: Colors.black,
+      // color: const Color.fromARGB(255, 10, 17, 32),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -78,7 +77,7 @@ class _SwapCardState extends State<SwapCard> {
                                   provider.selectedFromCurrency),
                             ),
                             icon: const Icon(Icons.content_copy_rounded),
-                            color: Colors.white60,
+                            // color: Colors.white60,
                           ),
                         ],
                       ),

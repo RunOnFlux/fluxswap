@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'swapstats.dart';
+import 'package:fluxswap/fluxswapstats/swapstats.dart';
 
 class TotalSwapsDisplay extends StatefulWidget {
+  const TotalSwapsDisplay({super.key});
+
   @override
   _TotalSwapsDisplayState createState() => _TotalSwapsDisplayState();
 }
@@ -30,14 +32,15 @@ class _TotalSwapsDisplayState extends State<TotalSwapsDisplay> {
           if (snapshot.hasData) {
             return Center(
               child: Text('Swaps so far: ${snapshot.data}',
-                  style: TextStyle(fontSize: 24)),
+                  style: const TextStyle(fontSize: 24)),
             );
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error fetching data swap statistics"));
+            return const Center(
+                child: Text("Error fetching data swap statistics"));
           }
         }
         // By default, show a loading spinner.
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
