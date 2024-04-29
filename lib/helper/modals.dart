@@ -1,70 +1,108 @@
 import 'package:flutter_web3/flutter_web3.dart';
 
-var chainIds = {
-  1: "Ethereum",
-  3: "Ropsten Test Network",
-  4: "Rinkeby Test Network",
-  5: "Goerli Test Network",
-  42: "Kovan Test Network",
-  56: "BNB Chain",
-  97: "Binance Smart Chain Test Network",
-  137: "Polygon",
-  43114: "Avalanche",
-  8453: "Base",
-};
-
-var fluxContractAddresses = {
-  "ETH": '0x720CD16b011b987Da3518fbf38c3071d4F0D1495',
-  "BSC": '0xaFF9084f2374585879e8B434C399E29E80ccE635',
-  "SOL": 'FLUX1wa2GmbtSB6ZGi2pTNbVCw3zEeKnaPCkPtFXxqXe',
-  "TRON": 'TWr6yzukRwZ53HDe3bzcC8RCTbiKa4Zzb6',
-  "AVAX": '0xc4B06F17ECcB2215a5DBf042C672101Fc20daF55',
-  "ERGO": 'e8b20745ee9d18817305f32eb21015831a48f02d40980de6e849f886dca7f807',
-  "ALGO": '1029804829',
-  "MATIC": '0xA2bb7A68c46b53f6BbF6cC91C865Ae247A82E99B',
-  "BASE": '0xb008bdcf9cdff9da684a190941dc3dca8c2cdd44',
-};
-
-var fluxChainNames = {
-  "FLUX": 'main',
-  "ETH": 'eth',
-  "BSC": 'bsc',
-  "SOL": 'sol',
-  "TRX": 'trx',
-  "AVAX": 'avax',
-  "ERGO": 'erg',
-  "ALGO": 'algo',
-  "MATIC": 'matic',
-  "BASE": 'base',
-  "BTC": 'btc',
-  "KDA": 'kda'
-};
-
-class SwapingCoin {
-  final String name;
+class CoinInfo {
+  final String apiname;
+  final String swapingName;
+  final String contractAddress;
   final String imageName;
+  final int chainId;
+  final String chainName;
 
-  SwapingCoin({
-    required this.name,
-    required this.imageName,
-  });
+  CoinInfo(
+      {required this.apiname,
+      required this.swapingName,
+      required this.contractAddress,
+      required this.imageName,
+      required this.chainId,
+      required this.chainName});
 }
 
-var swapingCoins = {
-  "FLUX": SwapingCoin(name: 'FLUX', imageName: '/images/flux-icon.svg'),
-  'FLUX-BSC': SwapingCoin(name: 'FLUX-BSC', imageName: '/images/bnb-icon.svg'),
-  'FLUX-SOL': SwapingCoin(name: 'FLUX-SOL', imageName: '/images/flux-icon.svg'),
-  'FLUX-TRX': SwapingCoin(name: 'FLUX-TRX', imageName: '/images/flux-icon.svg'),
-  'FLUX-ERGO':
-      SwapingCoin(name: 'FLUX-ERGO', imageName: '/images/flux-icon.svg'),
-  'FLUX-AVAX':
-      SwapingCoin(name: 'FLUX-AVAX', imageName: '/images/avax-icon.svg'),
-  'FLUX-ALGO':
-      SwapingCoin(name: 'FLUX-ALGO', imageName: '/images/flux-icon.svg'),
-  'FLUX-MATIC':
-      SwapingCoin(name: 'FLUX-MATIC', imageName: '/images/polygon-icon.svg'),
-  'FLUX-KDA': SwapingCoin(name: 'FLUX-KDA', imageName: '/images/flux-icon.svg'),
-  'FLUX-ETH': SwapingCoin(name: 'FLUX-ETH', imageName: '/images/eth-icon.svg'),
+var coinInfo = {
+  "FLUX": CoinInfo(
+      apiname: 'main',
+      swapingName: "FLUX",
+      contractAddress: "",
+      imageName: '/images/flux-icon.svg',
+      chainId: 0,
+      chainName: "Flux"),
+  "ETH": CoinInfo(
+      apiname: 'eth',
+      swapingName: "FLUX-ETH",
+      contractAddress: "0x720CD16b011b987Da3518fbf38c3071d4F0D1495",
+      imageName: '/images/eth-icon.svg',
+      chainId: 1,
+      chainName: "Ethereum"),
+  "BSC": CoinInfo(
+      apiname: 'bsc',
+      swapingName: "FLUX-BSC",
+      contractAddress: "0xaFF9084f2374585879e8B434C399E29E80ccE635",
+      imageName: '/images/bnb-icon.svg',
+      chainId: 56,
+      chainName: "BNB Chain"),
+  "SOL": CoinInfo(
+      apiname: 'sol',
+      swapingName: "FLUX-SOL",
+      contractAddress: "FLUX1wa2GmbtSB6ZGi2pTNbVCw3zEeKnaPCkPtFXxqXe",
+      imageName: '/images/flux-icon.svg',
+      chainId: 0,
+      chainName: "Solona"),
+  "TRX": CoinInfo(
+      apiname: 'trx',
+      swapingName: "FLUX-TRON",
+      contractAddress: "TWr6yzukRwZ53HDe3bzcC8RCTbiKa4Zzb6",
+      imageName: '/images/flux-icon.svg',
+      chainId: 0,
+      chainName: "Tron"),
+  "AVAX": CoinInfo(
+      apiname: 'avax',
+      swapingName: "FLUX-AVAX",
+      contractAddress: "0xc4B06F17ECcB2215a5DBf042C672101Fc20daF55",
+      imageName: '/images/avax-icon.svg',
+      chainId: 43114,
+      chainName: "Avalanche"),
+  "ERGO": CoinInfo(
+      apiname: 'erg',
+      swapingName: "FLUX-ERGO",
+      contractAddress:
+          "e8b20745ee9d18817305f32eb21015831a48f02d40980de6e849f886dca7f807",
+      imageName: '/images/flux-icon.svg',
+      chainId: 0,
+      chainName: "Ergo"),
+  "ALGO": CoinInfo(
+      apiname: 'algo',
+      swapingName: "FLUX-ALGO",
+      contractAddress: "1029804829",
+      imageName: '/images/flux-icon.svg',
+      chainId: 0,
+      chainName: "Alogrand"),
+  "MATIC": CoinInfo(
+      apiname: 'matic',
+      swapingName: "FLUX-MATIC",
+      contractAddress: "102980xA2bb7A68c46b53f6BbF6cC91C865Ae247A82E99B04829",
+      imageName: '/images/polygon-icon.svg',
+      chainId: 137,
+      chainName: "Polygon"),
+  "BASE": CoinInfo(
+      apiname: 'base',
+      swapingName: "FLUX-BASE",
+      contractAddress: "0xb008bdcf9cdff9da684a190941dc3dca8c2cdd44",
+      imageName: '/images/base-icon.svg',
+      chainId: 8453,
+      chainName: "Base"),
+  "KDA": CoinInfo(
+      apiname: 'kda',
+      swapingName: "FLUX-KDA",
+      contractAddress: "",
+      imageName: '/images/flux-icon.svg',
+      chainId: 0,
+      chainName: "Kda"),
+  // "BTC": CoinInfo(
+  //     apiname: 'btc',
+  //     swapingName: "FLUX-BTC",
+  //     contractAddress: "",
+  //     imageName: '/images/flux-icon.svg',
+  //     chainId: 0,
+  //     chainName: "Bitcoin"),
 };
 
 class MetaMaskNetworkInfo {
@@ -119,25 +157,29 @@ var metamaskNetworks = {
 
 String getNetworkName(int chain) {
   String network = "Unknown Network";
-  if (chainIds.containsKey(chain)) {
-    network = chainIds[chain]!;
+
+  for (CoinInfo info in coinInfo.values) {
+    if (info.chainId == chain) {
+      network = info.chainName;
+      break;
+    }
   }
   return network;
 }
 
 String getSecondPart(String input) {
   List<String> parts = input.split('-');
-  return parts.length > 1 ? parts[1] : '';
+  return parts.length > 1 ? parts[1] : 'FLUX';
 }
 
 String convertCurrencyForAPI(String currency) {
-  if (fluxChainNames.containsKey(currency)) {
-    return fluxChainNames[currency]!;
+  if (coinInfo.containsKey(currency)) {
+    return coinInfo[currency]!.apiname;
   }
 
   String secondpart = getSecondPart(currency);
-  if (fluxChainNames.containsKey(secondpart)) {
-    return fluxChainNames[secondpart]!;
+  if (coinInfo.containsKey(secondpart)) {
+    return coinInfo[secondpart]!.apiname;
   }
 
   return '';

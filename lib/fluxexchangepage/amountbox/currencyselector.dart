@@ -35,13 +35,13 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
         ),
         offset: const Offset(0, 50),
         itemBuilder: (BuildContext context) {
-          return swapingCoins.values.toList().map((SwapingCoin value) {
-            bool isSelected = value.name ==
+          return coinInfo.values.toList().map((CoinInfo value) {
+            bool isSelected = value.swapingName ==
                 (widget.isFrom
                     ? provider.selectedFromCurrency
                     : provider.selectedToCurrency);
             return PopupMenuItem<String>(
-              value: value.name,
+              value: value.swapingName,
               child: Row(
                 children: [
                   SvgPicture.asset(
@@ -51,7 +51,7 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
                   ),
                   const SizedBox(
                       width: 10), // Add spacing between icon and text
-                  Text(value.name),
+                  Text(value.swapingName),
                   const SizedBox(width: 40),
                   if (isSelected)
                     const Icon(
@@ -88,7 +88,7 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                '${swapingCoins[widget.isFrom ? provider.selectedFromCurrency : provider.selectedToCurrency]?.imageName}',
+                '${coinInfo[widget.isFrom ? getSecondPart(provider.selectedFromCurrency) : getSecondPart(provider.selectedToCurrency)]?.imageName}',
                 width: 20,
                 height: 20,
               ),

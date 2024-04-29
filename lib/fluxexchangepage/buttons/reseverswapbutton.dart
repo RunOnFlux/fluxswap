@@ -9,8 +9,8 @@ class ReserveSwapButton extends StatelessWidget {
   final String zelid;
   final ReserveRequest reserveRequest;
 
-  ReserveSwapButton(
-      {required this.formKey,
+  const ReserveSwapButton(
+      {super.key, required this.formKey,
       required this.zelid,
       required this.reserveRequest});
 

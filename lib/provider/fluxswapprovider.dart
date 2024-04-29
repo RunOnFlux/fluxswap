@@ -144,10 +144,13 @@ class FluxSwapProvider extends ChangeNotifier {
 
       currentChain = await ethereum!.getChainId();
 
-      if (chainIds.containsKey(currentChain)) {
-        selectedChain = chainIds[currentChain]!;
-        previousSelectedChain = selectedChain;
-      }
+      coinInfo.forEach((key, value) {
+        if (value.chainId == currentChain) {
+          selectedChain = value.chainName;
+          previousSelectedChain = selectedChain;
+          selectedFromCurrency = value.swapingName;
+        }
+      });
 
       getBalance();
       getFluxTokenBalance(currentChain);

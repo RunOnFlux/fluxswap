@@ -4,14 +4,14 @@ import 'package:fluxswap/api/requests.dart';
 import 'package:fluxswap/fluxexchangepage/buttons/reseverswapbutton.dart';
 import 'package:fluxswap/helper/modals.dart';
 import 'package:fluxswap/provider/fluxswapprovider.dart';
-import 'package:fluxswap/sendflux.dart';
+import 'package:fluxswap/fluxexchangepage/sendflux.dart';
 import 'package:fluxswap/fluxswapstats/totalswaps.dart';
 import 'package:fluxswap/fluxexchangepage/addressbox/addresstextformfield.dart';
 import 'package:fluxswap/fluxexchangepage/zelidbox/zelidfield.dart';
 import 'package:provider/provider.dart';
 
 class FluxExchangeScreen extends StatefulWidget {
-  const FluxExchangeScreen({Key? key}) : super(key: key);
+  const FluxExchangeScreen({super.key});
 
   @override
   _FluxExchangeScreenState createState() => _FluxExchangeScreenState();
@@ -41,7 +41,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        TotalSwapsDisplay(),
+        const TotalSwapsDisplay(),
         const SizedBox(height: 40),
         Center(
           child: Consumer<FluxSwapProvider>(

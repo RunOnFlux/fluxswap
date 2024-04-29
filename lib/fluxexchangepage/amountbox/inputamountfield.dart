@@ -7,10 +7,10 @@ class InputAmountField extends StatefulWidget {
   final GlobalKey<FormState> formKey;
 
   const InputAmountField({
-    Key? key,
+    super.key,
     required this.toAmountController,
     required this.formKey,
-  }) : super(key: key);
+  });
 
   @override
   _CurrencyInputFieldState createState() => _CurrencyInputFieldState();
