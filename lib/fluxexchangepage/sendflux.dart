@@ -22,14 +22,7 @@ class _SwapCardState extends State<SwapCard> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FluxSwapProvider>(context);
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: const BorderSide(color: Colors.white54, width: 1),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      elevation: 15,
-      // shadowColor: Colors.black,
-      // color: const Color.fromARGB(255, 10, 17, 32),
+    return Container(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -51,64 +44,108 @@ class _SwapCardState extends State<SwapCard> {
                   padding: const EdgeInsets.all(50.0),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('Send'),
-                          const SizedBox(width: 5),
-                          Text(
-                            provider.fromAmount
-                                .toString(), // Linked to a controller
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(width: 5),
-                          Text('${provider.selectedFromCurrency} to'),
-                          const SizedBox(width: 5),
-                          Text(
-                            getSwapAddress(provider.swapInfoResponse,
-                                provider.selectedFromCurrency),
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          IconButton(
-                            onPressed: () => _copyText(
-                              getSwapAddress(provider.swapInfoResponse,
-                                  provider.selectedFromCurrency),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: const Color.fromRGBO(237, 237, 237, 1),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Send',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  "${provider.fromAmount.toString()} ${provider.selectedFromCurrency}", // Linked to a controller
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(width: 5),
+                                const Text(
+                                  'to',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                              ],
                             ),
-                            icon: const Icon(Icons.content_copy_rounded),
-                            // color: Colors.white60,
-                          ),
-                        ],
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  getSwapAddress(provider.swapInfoResponse,
+                                      provider.selectedFromCurrency),
+                                  style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                IconButton(
+                                  onPressed: () => _copyText(
+                                    getSwapAddress(provider.swapInfoResponse,
+                                        provider.selectedFromCurrency),
+                                  ),
+                                  icon: const Icon(Icons.content_copy_rounded),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('Receive'),
-                          const SizedBox(width: 5),
-                          Text(
-                            provider.toAmount
-                                .toString(), // Linked to a controller
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(width: 5),
-                          Text('${provider.selectedToCurrency} to'),
-                          const SizedBox(width: 5),
-                          Text(
-                            provider
-                                .toAddress, // Assuming direct input for receiving address
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          IconButton(
-                            onPressed: () => _copyText(getSwapAddress(
-                                provider.swapInfoResponse,
-                                provider.selectedFromCurrency)),
-                            icon: const Icon(Icons.content_copy_rounded),
-                            color: Colors.white60,
-                          ),
-                        ],
+                      const SizedBox(height: 20),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: const Color.fromRGBO(237, 237, 237, 1),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Receive',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  "${provider.toAmount.toString()} ${provider.selectedToCurrency}", // Linked to a controller
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(width: 5),
+                                const Text(
+                                  'to',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  provider.toAddress,
+                                  style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 20),
                       Row(

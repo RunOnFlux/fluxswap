@@ -149,6 +149,9 @@ class FluxSwapProvider extends ChangeNotifier {
           selectedChain = value.chainName;
           previousSelectedChain = selectedChain;
           selectedFromCurrency = value.swapingName;
+          if (selectedToCurrency == selectedFromCurrency) {
+            selectedToCurrency = 'FLUX';
+          }
         }
       });
 

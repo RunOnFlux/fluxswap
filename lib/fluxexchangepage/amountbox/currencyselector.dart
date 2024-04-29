@@ -40,8 +40,13 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
                 (widget.isFrom
                     ? provider.selectedFromCurrency
                     : provider.selectedToCurrency);
+            bool isSelectable = value.swapingName !=
+                (widget.isFrom
+                    ? provider.selectedToCurrency
+                    : provider.selectedFromCurrency);
             return PopupMenuItem<String>(
               value: value.swapingName,
+              enabled: isSelectable,
               child: Row(
                 children: [
                   SvgPicture.asset(
