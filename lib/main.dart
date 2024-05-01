@@ -63,12 +63,11 @@ class _CryptoSwapPageState extends State<CryptoSwapPage> {
             children: [
               Container(
                 alignment: Alignment.topLeft,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: SvgPicture.asset(
                   '/images/flux-icon.svg',
-                  width: 100,
-                  height: 75,
+                  width: 80,
+                  height: 80,
                 ),
               ),
               NetworkSelectionMenu(

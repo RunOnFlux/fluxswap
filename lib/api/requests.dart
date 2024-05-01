@@ -1,5 +1,8 @@
+import 'package:fluxswap/provider/fluxswapprovider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:provider/provider.dart';
 
 class ReserveRequest {
   String chainFrom;
@@ -134,22 +137,35 @@ class SwapResponse {
   String txidFrom;
   int fee;
   int confsRequired;
+  String id;
 
+  // Constructor with default values for both strings and numbers
   SwapResponse({
-    required this.chainFrom,
-    required this.chainTo,
-    required this.addressFrom,
-    required this.addressTo,
-    required this.zelid,
-    required this.timestamp,
-    required this.expectedAmountFrom,
-    required this.expectedAmountTo,
-    required this.txidFrom,
-    required this.fee,
-    required this.confsRequired,
+    this.chainFrom = '',
+    this.chainTo = '',
+    this.addressFrom = '',
+    this.addressTo = '',
+    this.zelid = '',
+    this.timestamp = 0,
+    this.expectedAmountFrom = 0.0,
+    this.expectedAmountTo = 0.0,
+    this.txidFrom = '',
+    this.fee = 0,
+    this.confsRequired = 0,
+    this.id = '',
   });
 
-  // Converts a TransactionData object to a Map
+  // Method to check if any string fields are empty
+  bool isNull() {
+    return chainFrom.isEmpty ||
+        chainTo.isEmpty ||
+        addressFrom.isEmpty ||
+        addressTo.isEmpty ||
+        zelid.isEmpty ||
+        txidFrom.isEmpty;
+  }
+
+  // Converts the object to a Map
   Map<String, dynamic> toJson() {
     return {
       'chainFrom': chainFrom,
@@ -163,23 +179,25 @@ class SwapResponse {
       'txidFrom': txidFrom,
       'fee': fee,
       'confsRequired': confsRequired,
+      '_id': id,
     };
   }
 
-  // Factory method to create a TransactionData object from a Map
+  // Factory method to create a SwapResponse object from a Map
   factory SwapResponse.fromJson(Map<String, dynamic> json) {
     return SwapResponse(
-      chainFrom: json['chainFrom'],
-      chainTo: json['chainTo'],
-      addressFrom: json['addressFrom'],
-      addressTo: json['addressTo'],
-      zelid: json['zelid'],
-      timestamp: json['timestamp'],
-      expectedAmountFrom: json['expectedAmountFrom'].toDouble(),
-      expectedAmountTo: json['expectedAmountTo'].toDouble(),
-      txidFrom: json['txidFrom'],
-      fee: json['fee'],
-      confsRequired: json['confsRequired'],
+      chainFrom: json['chainFrom'] ?? '',
+      chainTo: json['chainTo'] ?? '',
+      addressFrom: json['addressFrom'] ?? '',
+      addressTo: json['addressTo'] ?? '',
+      zelid: json['zelid'] ?? '',
+      timestamp: json['timestamp'] ?? 0,
+      expectedAmountFrom: (json['expectedAmountFrom'] ?? 0.0).toDouble(),
+      expectedAmountTo: (json['expectedAmountTo'] ?? 0.0).toDouble(),
+      txidFrom: json['txidFrom'] ?? '',
+      fee: json['fee'] ?? 0,
+      confsRequired: json['confsRequired'] ?? 0,
+      id: json['_id'] ?? '',
     );
   }
 }
@@ -214,6 +232,7 @@ Future<List<dynamic>> createSwapRequest(
 
     bool success = true;
     String message = "Swap Created Successfully.";
+    SwapResponse swapResponse = SwapResponse();
 
     // Check the status code for the result
     if (response.statusCode == 200) {
@@ -225,13 +244,20 @@ Future<List<dynamic>> createSwapRequest(
         success = false;
         message = obj['data']['message'];
       }
+
+      try {
+        swapResponse = SwapResponse.fromJson(obj['data']);
+      } catch (e) {
+        print("Failed to put object into SwapResponse");
+        print(e);
+      }
     } else {
       print('Error: ${response.statusCode}');
       success = false;
       message = "Bad Api Call";
     }
 
-    return [success, message];
+    return [success, message, swapResponse];
   } catch (e) {
     throw Exception('Failed to send post request: $e');
   }

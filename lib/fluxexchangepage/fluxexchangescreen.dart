@@ -1,4 +1,9 @@
+import 'dart:html';
+import 'dart:io';
+
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluxswap/fluxexchangepage/amountbox/amountcontainerbox.dart';
 import 'package:fluxswap/api/requests.dart';
 import 'package:fluxswap/fluxexchangepage/buttons/reseverswapbutton.dart';
@@ -9,6 +14,7 @@ import 'package:fluxswap/fluxswapstats/totalswaps.dart';
 import 'package:fluxswap/fluxexchangepage/addressbox/addresstextformfield.dart';
 import 'package:fluxswap/fluxexchangepage/zelidbox/zelidfield.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class FluxExchangeScreen extends StatefulWidget {
   const FluxExchangeScreen({super.key});
@@ -20,6 +26,15 @@ class FluxExchangeScreen extends StatefulWidget {
 class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController toAmountController = TextEditingController();
+
+  void _showSnackbar() {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Text Copied")));
+  }
+
+  void _copyText(String copytext) {
+    FlutterClipboard.copy(copytext).then((value) => _showSnackbar());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,24 +86,213 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
               } else if (provider.isSwapCreated) {
                 String message = 'Your swap failed to submit';
                 if (provider.isSwapValid) {
-                  message = 'You swap was successful';
+                  message = 'Your swap was successful';
                 }
                 return AlertDialog(
-                  title: const Text('Swap Information'),
-                  content: Text(message),
+                  alignment: Alignment.center,
+                  content: Column(
+                    children: [
+                      const Text(
+                        "Swap Info",
+                        style: TextStyle(
+                          // color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Divider(),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Date: ${provider.dateFormat.format(DateTime.fromMillisecondsSinceEpoch(provider.swapResponse.timestamp).toLocal())}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Swap ID: ${provider.swapResponse.id}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () =>
+                                _copyText(provider.swapResponse.id),
+                            icon: const Icon(Icons.content_copy_rounded),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "From: ${provider.swapResponse.addressFrom}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () =>
+                                _copyText(provider.swapResponse.addressFrom),
+                            icon: const Icon(Icons.content_copy_rounded),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "To: ${provider.swapResponse.addressTo}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () =>
+                                _copyText(provider.swapResponse.addressTo),
+                            icon: const Icon(Icons.content_copy_rounded),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Fee: ${provider.swapResponse.fee}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "${provider.submittedFromCurrency}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "Explorer:",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 4),
+                          InkWell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Text(
+                                  '${provider.swapResponse.txidFrom}',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                String url = explorerInfo[
+                                        provider.swapResponse.chainFrom]! +
+                                    provider.swapResponse.txidFrom;
+                                print(url);
+                                launchUrlString(url);
+                              }),
+                        ],
+                      ),
+                      Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "${provider.swapResponse.expectedAmountFrom}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "${provider.submittedFromCurrency}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SvgPicture.asset(
+                            '${coinInfo[provider.submittedFromCurrency]?.imageName}',
+                            width: 80,
+                            height: 80,
+                          ),
+                          const Icon(
+                            Icons.arrow_right_alt,
+                            size: 80,
+                            color: Colors.green,
+                          ),
+                          Text(
+                            "${provider.swapResponse.expectedAmountTo}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "${provider.submittedToCurrency}",
+                            style: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SvgPicture.asset(
+                            '${coinInfo[provider.submittedToCurrency]?.imageName}',
+                            width: 80,
+                            height: 80,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   actions: <Widget>[
                     TextButton(
                       onPressed: () {
                         setState(() {
-                          provider.isReservedApproved = false;
-                          provider.isReservedValid = false;
-                          provider.isSwapCreated = false;
-                          provider.isSwapValid = false;
-                          provider.toAddress = '';
-                          provider.fromAddress = '';
+                          provider.resetForNewSwap();
                         });
                       },
-                      child: const Text('Okay'),
+                      child: const Text('Close'),
                     ),
                   ],
                 );
@@ -138,9 +342,9 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                             reserveRequest: ReserveRequest(
                                 addressFrom: provider.fromAddress,
                                 addressTo: provider.toAddress,
-                                chainFrom: convertCurrencyForAPI(
+                                chainFrom: getCurrencyApiName(
                                     provider.selectedFromCurrency),
-                                chainTo: convertCurrencyForAPI(
+                                chainTo: getCurrencyApiName(
                                     provider.selectedToCurrency)),
                             formKey: _formKey,
                           ),

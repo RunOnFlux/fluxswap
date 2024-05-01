@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_web3/flutter_web3.dart';
+import 'package:fluxswap/api/requests.dart';
 import 'package:fluxswap/web3/fluxamount.dart';
 import 'package:fluxswap/api/swapinfo.dart';
 import 'package:fluxswap/helper/modals.dart';
+import 'package:intl/intl.dart';
 
 class ContractInfo {
   final int chain;
@@ -12,6 +14,20 @@ class ContractInfo {
     required this.chain,
     required this.contractAddress,
   });
+}
+
+class MetamaskReturn {
+  bool fSuccessful = false;
+  bool fCancelled = false;
+  String message = '';
+  String hash = '';
+
+  MetamaskReturn() {
+    fSuccessful = false;
+    fCancelled = false;
+    message = '';
+    hash = '';
+  }
 }
 
 // ignore: constant_identifier_names
@@ -51,6 +67,9 @@ class CoinDetails {
 }
 
 class FluxSwapProvider extends ChangeNotifier {
+  // Date
+  DateFormat dateFormat = DateFormat("MM-dd-yyyy HH:mm");
+
   // Metamask stuff
   static const operatingChain = 4;
   String currentAddress = '';
@@ -72,6 +91,7 @@ class FluxSwapProvider extends ChangeNotifier {
   double toAmount = 90;
   String _fromAddress = '';
   String _toAddress = '';
+  String swapTxid = '';
 
   // Requests / Reponses
   late SwapInfoResponse swapInfoResponse;
@@ -79,6 +99,10 @@ class FluxSwapProvider extends ChangeNotifier {
   bool _isReservedApproved = false; // Set by the Approved Button
   bool _isReservedValid = false;
   String _reservedMessage = '';
+  ReserveRequest submittedRequest = ReserveRequest(
+      chainFrom: "", chainTo: "", addressFrom: "", addressTo: "");
+  String submittedFromCurrency = '';
+  String submittedToCurrency = '';
 
   bool get isReservedApproved => _isReservedApproved;
 
@@ -115,20 +139,68 @@ class FluxSwapProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool isSwapCreated = false; // Set by the Approved Button
-  bool isSwapValid = false; // Set by the Approved Button
+  SwapResponse swapResponse = SwapResponse();
+// For testing final dialog box
+  // SwapResponse swapResponse = SwapResponse(
+  //     id: "66325ae0ffb95a575f0bf4a4",
+  //     chainFrom: "bsc",
+  //     chainTo: "matic",
+  //     addressFrom: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
+  //     addressTo: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
+  //     expectedAmountFrom: 4,
+  //     expectedAmountTo: 1,
+  //     txidFrom:
+  //         "0x15179093bf68a23a621a6e1a3f5bc02bf5dfa7a422dbd71c1252aaf298a2b670",
+  //     fee: 3,
+  //     timestamp: 1714498454333);
+
+  bool _isSwapCreated = false; // Set by the Approved Button
+  bool _isSwapValid = false; // Set by the Approved Button
   String swapMessage = '';
+
+  set isSwapValid(value) {
+    _isSwapValid = value;
+    notifyListeners();
+  }
+
+  set isSwapCreated(value) {
+    _isSwapCreated = value;
+    notifyListeners();
+  }
+
+  bool get isSwapValid => _isSwapValid;
+  bool get isSwapCreated => _isSwapCreated;
 
   bool isSwapInfoLoading = true;
   bool hasSwapInfoError = false;
   String errorSwapInfoMessage = "";
 
+  void resetForNewSwap() {
+    isReservedApproved = false;
+    isReservedValid = false;
+    isSwapCreated = false;
+    isSwapValid = false;
+    toAddress = '';
+    fromAddress = '';
+    toAddress = '';
+    fromAmount = 100;
+    toAmount = 90;
+    fluxID = '';
+    swapTxid = '';
+    submittedFromCurrency = 'FLUX';
+    submittedToCurrency = 'FLUX-ETH';
+    submittedRequest = ReserveRequest(
+        chainFrom: '', chainTo: '', addressFrom: '', addressTo: '');
+    swapResponse = SwapResponse();
+    notifyListeners();
+  }
+
   // Controllers
   double updateReceivedAmount() {
     double fee = getEstimatedFee(
         fromAmount,
-        convertCurrencyForAPI(selectedFromCurrency),
-        convertCurrencyForAPI(selectedToCurrency),
+        getCurrencyApiName(selectedFromCurrency),
+        getCurrencyApiName(selectedToCurrency),
         swapInfoResponse);
 
     toAmount = fromAmount - fee;
@@ -220,7 +292,7 @@ class FluxSwapProvider extends ChangeNotifier {
     }
   }
 
-  Future<String> sendToken(
+  Future<MetamaskReturn> sendToken(
       int chain, String spenderAddress, String recepient, BigInt amount) async {
     try {
       if (isConnected) {
@@ -250,19 +322,82 @@ class FluxSwapProvider extends ChangeNotifier {
         // Now transfer the tokens
         final transaction = await contract.transferFrom(
             spenderAddress, recepient, newAmount.getInWei);
-        final receipt = await transaction.wait();
-        print('Transfer successful: $receipt');
+
+        // If you want to wait until the transaction is mined into a block
+        // final receipt = await transaction.wait();
+        // print('Transfer successful: $receipt');
 
         notifyListeners();
+        MetamaskReturn metamaskReturn = MetamaskReturn();
+        metamaskReturn.fSuccessful = true;
+        metamaskReturn.hash = transaction.hash;
 
-        return receipt.transactionHash;
+        return metamaskReturn;
       } else {
-        return "";
+        MetamaskReturn metamaskReturn = MetamaskReturn();
+        metamaskReturn.fSuccessful = false;
+        metamaskReturn.message = "Metamask not connected";
+        return metamaskReturn;
       }
+    } on EthereumUserRejected {
+      MetamaskReturn metamaskReturn = MetamaskReturn();
+      metamaskReturn.fSuccessful = false;
+      metamaskReturn.fCancelled = true;
+      return metamaskReturn;
     } catch (e) {
       print('Failed to transfer tokens: $e');
-      return "";
+      MetamaskReturn metamaskReturn = MetamaskReturn();
+      metamaskReturn.fSuccessful = false;
+      metamaskReturn.fCancelled = false;
+      metamaskReturn.message = e.toString();
+      return metamaskReturn;
     }
+  }
+
+  bool isConnectedChainSendable() {
+    if (isConnected) {
+      for (CoinInfo info in coinInfo.values) {
+        if (info.chainId == currentChain) {
+          if (info.chainName == selectedChain) {
+            if (info.swapingName == submittedFromCurrency) {
+              return true;
+            }
+          }
+        }
+      }
+      print("Connected Chain doesn't match From Currency");
+      return false;
+    }
+    print("Wallet not connected");
+    return false;
+  }
+
+  String getQRData() {
+    return '${getQRCodeUriName(submittedFromCurrency)}:${getSwapAddress(swapInfoResponse, submittedFromCurrency)}?amount=$fromAmount';
+  }
+
+  String verifyProviderData() {
+    if (toAmount <= 0) {
+      return "Received Amount <= 0";
+    }
+
+    if (fromAmount <= 0) {
+      return "From Amount <= 0";
+    }
+
+    if (submittedFromCurrency == submittedToCurrency) {
+      return "Same Currencies selected";
+    }
+
+    if (toAddress.isEmpty) {
+      return "Destination Address Empty";
+    }
+
+    if (fromAddress.isEmpty) {
+      return "From Address Empty";
+    }
+
+    return "";
   }
 
   double getGasCoinAmount() {
@@ -299,11 +434,6 @@ class FluxSwapProvider extends ChangeNotifier {
     }
 
     return contract;
-  }
-
-  String getSecondPart(String input) {
-    List<String> parts = input.split('-');
-    return parts.length > 1 ? parts[1] : '';
   }
 
   clear() {

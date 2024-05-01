@@ -139,7 +139,7 @@ double getEstimatedFee(double startingAmount, String fromChain, String toChain,
 }
 
 String getSwapAddress(SwapInfoResponse response, String selectedFromCurrency) {
-  String fromCurrency = convertCurrencyForAPI(selectedFromCurrency);
+  String fromCurrency = getCurrencyApiName(selectedFromCurrency);
 
   for (SwapAddress info in response.swapAddresses) {
     if (info.chain == fromCurrency) {

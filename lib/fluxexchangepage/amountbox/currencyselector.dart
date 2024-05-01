@@ -93,9 +93,9 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                '${coinInfo[widget.isFrom ? getSecondPart(provider.selectedFromCurrency) : getSecondPart(provider.selectedToCurrency)]?.imageName}',
-                width: 20,
-                height: 20,
+                '${coinInfo[widget.isFrom ? provider.selectedFromCurrency : provider.selectedToCurrency]?.imageName}',
+                width: 30,
+                height: 30,
               ),
               const SizedBox(width: 10), // Add spacing between icon and text
               Text(widget.isFrom

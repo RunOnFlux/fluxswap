@@ -1,6 +1,38 @@
-<svg id="Flux_symbol-mark_blue" xmlns="http://www.w3.org/2000/svg" width="279.714" height="322.975" viewBox="0 0 279.714 322.975">
-  <path id="Path_73" data-name="Path 73" d="M175.03,202.425l-28.9,16.7L84.03,183.28l28.2-16.285.7-.414,1.077.622Z" transform="translate(-6.271 103.85)" fill="#2b61d1"/>
-  <path id="Path_74" data-name="Path 74" d="M326.213,116.8v33.607L265.09,115.125l-16.576-9.572-16.576,9.572-77.7,44.858-16.576,9.572v19.787l-29.9-17.259-16.576-9.572-16.576,9.572L46.5,188.307V116.8L186.356,36.06Z" transform="translate(-46.5 -36.06)" fill="#2b61d1"/>
-  <path id="Path_75" data-name="Path 75" d="M261.9,132.948v89.715l-77.7,44.858-.1-.062-77.594-44.8V132.948L184.2,88.07Z" transform="translate(17.819 19.693)" fill="#2b61d1"/>
-  <path id="Path_76" data-name="Path 76" d="M135.884,141.366v51.591L91.192,218.774,46.5,192.957V141.366l44.692-25.8Z" transform="translate(-46.5 49.17)" fill="#2b61d1"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="Flux_symbol-mark_blue"
+   width="279.714"
+   height="322.975"
+   viewBox="0 0 279.714 322.975"
+   version="1.1"
+   sodipodi:docname="flux-icon.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <path
+     id="Path_73"
+     data-name="Path 73"
+     d="m 156.04322,242.5685 -16.184,9.352 -34.776,-20.0732 15.792,-9.1196 0.392,-0.23184 0.60312,0.34832 z"
+     fill="#2b61d1"
+     style="stroke-width:0.56" />
+  <path
+     id="Path_74"
+     data-name="Path 74"
+     d="m 218.17746,116.2689 v 18.81992 l -34.22888,-19.75792 -9.28256,-5.36032 -9.28256,5.36032 -43.512,25.12048 -9.28256,5.36032 v 11.08072 l -16.744,-9.66504 -9.28256,-5.36032 -9.28256,5.36032 -15.7416,9.08544 V 116.2689 l 78.31936,-45.2144 z"
+     fill="#2b61d1"
+     style="stroke-width:0.56" />
+  <path
+     id="Path_75"
+     data-name="Path 75"
+     d="m 218.18082,156.53346 v 50.2404 l -43.512,25.12048 -0.056,-0.0347 -43.45264,-25.088 v -50.23816 l 43.50864,-25.13168 z"
+     fill="#2b61d1"
+     style="stroke-width:0.56" />
+  <path
+     id="Path_76"
+     data-name="Path 76"
+     d="m 111.59322,177.75466 v 28.89096 L 86.5657,221.10314 61.53818,206.64562 v -28.89096 l 25.02752,-14.448 z"
+     fill="#2b61d1"
+     style="stroke-width:0.56" />
 </svg>

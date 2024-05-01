@@ -41,6 +41,10 @@ class ApprovalDialog extends StatelessWidget {
                 bool success = value[0];
                 String message = value[1];
                 if (success) {
+                  provider.submittedRequest = reserveRequest;
+                  provider.submittedFromCurrency =
+                      provider.selectedFromCurrency;
+                  provider.submittedToCurrency = provider.selectedToCurrency;
                   provider.isReservedApproved = true;
                   provider.isReservedValid = true;
                   provider.reservedMessage = message;
