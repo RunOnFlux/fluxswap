@@ -5,7 +5,7 @@ import 'package:fluxswap/api/swapinfo.dart';
 import 'package:fluxswap/api/requests.dart';
 import 'package:fluxswap/helper/modals.dart';
 import 'package:provider/provider.dart';
-import 'package:fluxswap/provider/fluxswapprovider.dart';
+import 'package:fluxswap/changenotifier.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class SwapCard extends StatefulWidget {
@@ -114,98 +114,134 @@ class _SwapCardState extends State<SwapCard> {
                               bool showWalletButton =
                                   provider.isConnectedChainSendable();
                               if (showWalletButton) {
-                                return ElevatedButton(
-                                    onPressed: () {
-                                      String error =
-                                          provider.verifyProviderData();
-                                      if (error != "") {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text('Data error'),
-                                              content: Text(error),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: const Text('OK'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      } else {
-                                        provider
-                                            .sendToken(
-                                                provider.currentChain,
-                                                provider.fromAddress,
-                                                getSwapAddress(
-                                                    provider.swapInfoResponse,
-                                                    provider
-                                                        .submittedFromCurrency),
-                                                BigInt.from(
-                                                    provider.fromAmount))
-                                            .then((value) {
-                                          if (value.fSuccessful) {
-                                            provider.swapTxid = value.hash;
-                                            final swapRequest = SwapRequest(
-                                                amountFrom: provider.fromAmount,
-                                                addressFrom:
-                                                    provider.fromAddress,
-                                                addressTo: provider.toAddress,
-                                                chainFrom: getCurrencyApiName(
-                                                    provider
-                                                        .submittedFromCurrency),
-                                                chainTo: getCurrencyApiName(
-                                                    provider
-                                                        .submittedToCurrency),
-                                                txidFrom: value.hash);
-                                            createSwapRequest("", swapRequest)
-                                                .then(
-                                              (value) {
-                                                bool success = value[0];
-                                                String message = value[1];
-                                                SwapResponse response =
-                                                    value[2];
-                                                print(success);
-                                                print(message);
-                                                print(
-                                                    "Received: ${response.toJson().toString()}");
-                                                provider.swapResponse =
-                                                    response;
-                                                if (success) {
-                                                  provider.isSwapCreated = true;
-                                                  provider.isSwapValid = true;
-                                                  provider.swapMessage =
-                                                      message;
-                                                } else {
-                                                  provider.isSwapCreated = true;
-                                                  provider.isSwapValid = false;
-                                                  provider.swapMessage =
-                                                      message;
+                                return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            String error =
+                                                provider.verifyProviderData();
+                                            if (error != "") {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Data error'),
+                                                    content: Text(error),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: const Text('OK'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            } else {
+                                              provider
+                                                  .sendToken(
+                                                      provider.currentChain,
+                                                      provider.fromAddress,
+                                                      getSwapAddress(
+                                                          provider
+                                                              .swapInfoResponse,
+                                                          provider
+                                                              .submittedFromCurrency),
+                                                      BigInt.from(
+                                                          provider.fromAmount))
+                                                  .then((value) {
+                                                if (value.fSuccessful) {
+                                                  provider.swapTxid =
+                                                      value.hash;
+                                                  final swapRequest = SwapRequest(
+                                                      amountFrom:
+                                                          provider.fromAmount,
+                                                      addressFrom:
+                                                          provider.fromAddress,
+                                                      addressTo:
+                                                          provider.toAddress,
+                                                      chainFrom: getCurrencyApiName(
+                                                          provider
+                                                              .submittedFromCurrency),
+                                                      chainTo: getCurrencyApiName(
+                                                          provider
+                                                              .submittedToCurrency),
+                                                      txidFrom: value.hash);
+                                                  createSwapRequest(
+                                                          provider.fluxID,
+                                                          swapRequest)
+                                                      .then(
+                                                    (value) {
+                                                      bool success = value[0];
+                                                      String message = value[1];
+                                                      SwapResponse response =
+                                                          value[2];
+                                                      print(success);
+                                                      print(message);
+                                                      print(
+                                                          "Received: ${response.toJson().toString()}");
+                                                      provider.swapResponse =
+                                                          response;
+                                                      if (success) {
+                                                        provider.isSwapCreated =
+                                                            true;
+                                                        provider.isSwapValid =
+                                                            true;
+                                                        provider.swapMessage =
+                                                            message;
+                                                      } else {
+                                                        provider.isSwapCreated =
+                                                            true;
+                                                        provider.isSwapValid =
+                                                            false;
+                                                        provider.swapMessage =
+                                                            message;
+                                                      }
+                                                    },
+                                                  );
                                                 }
-                                              },
-                                            );
-                                          }
-                                        });
-                                      }
-                                    }, // Implement swap submission logic
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        SvgPicture.asset(
-                                          "/images/metamask-icon.svg",
-                                          width: 24,
-                                          height: 24,
-                                        ), // Adjust width as needed
-                                        SizedBox(
-                                            width:
-                                                10), // Space between text and image
-                                        Text('Send with Metamask'),
-                                      ],
-                                    ));
+                                              });
+                                            }
+                                          }, // Implement swap submission logic
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SvgPicture.asset(
+                                                "/images/metamask-icon.svg",
+                                                width: 24,
+                                                height: 24,
+                                              ), // Adjust width as needed
+                                              const SizedBox(
+                                                  width:
+                                                      10), // Space between text and image
+                                              const Text('Send with Metamask'),
+                                            ],
+                                          )),
+                                      ElevatedButton(
+                                          onPressed: () =>
+                                              print("Manual Button Pressed"),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SvgPicture.asset(
+                                                "/images/flux-icon.svg",
+                                                width: 24,
+                                                height: 24,
+                                              ), // Adjust width as needed
+                                              const SizedBox(
+                                                  width:
+                                                      10), // Space between text and image
+                                              const Text('Send Flux Manually'),
+                                            ],
+                                          ))
+                                    ]);
                               } else {
                                 return const Text("Send the flux manually");
                               }
@@ -214,7 +250,7 @@ class _SwapCardState extends State<SwapCard> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Icon(
+                      const Icon(
                         Icons.arrow_downward,
                         size: 50,
                       ),

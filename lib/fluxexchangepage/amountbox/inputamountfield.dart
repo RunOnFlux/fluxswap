@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluxswap/provider/fluxswapprovider.dart';
+import 'package:fluxswap/changenotifier.dart';
 import 'package:provider/provider.dart';
 
 class InputAmountField extends StatefulWidget {
@@ -13,6 +13,7 @@ class InputAmountField extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _CurrencyInputFieldState createState() => _CurrencyInputFieldState();
 }
 

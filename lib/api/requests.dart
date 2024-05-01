@@ -1,8 +1,5 @@
-import 'package:fluxswap/provider/fluxswapprovider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:provider/provider.dart';
 
 class ReserveRequest {
   String chainFrom;
@@ -138,6 +135,7 @@ class SwapResponse {
   int fee;
   int confsRequired;
   String id;
+  String status;
 
   // Constructor with default values for both strings and numbers
   SwapResponse({
@@ -153,6 +151,7 @@ class SwapResponse {
     this.fee = 0,
     this.confsRequired = 0,
     this.id = '',
+    this.status = '',
   });
 
   // Method to check if any string fields are empty
@@ -180,6 +179,7 @@ class SwapResponse {
       'fee': fee,
       'confsRequired': confsRequired,
       '_id': id,
+      'status': status,
     };
   }
 
@@ -198,6 +198,7 @@ class SwapResponse {
       fee: json['fee'] ?? 0,
       confsRequired: json['confsRequired'] ?? 0,
       id: json['_id'] ?? '',
+      status: json['status'],
     );
   }
 }

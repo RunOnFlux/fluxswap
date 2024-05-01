@@ -31,7 +31,7 @@ class _TotalSwapsDisplayState extends State<TotalSwapsDisplay> {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
             return Center(
-              child: Text('Swaps so far: ${snapshot.data}',
+              child: Text('Total Swaps Performed: ${snapshot.data}',
                   style: const TextStyle(fontSize: 24)),
             );
           } else if (snapshot.hasError) {

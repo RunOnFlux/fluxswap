@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluxswap/provider/fluxswapprovider.dart';
+import 'package:fluxswap/changenotifier.dart';
 import 'package:provider/provider.dart';
 import 'package:fluxswap/api/requests.dart';
 

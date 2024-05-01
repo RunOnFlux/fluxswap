@@ -2,7 +2,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluxswap/helper/modals.dart';
-import 'package:fluxswap/provider/fluxswapprovider.dart';
+import 'package:fluxswap/changenotifier.dart';
 import 'package:provider/provider.dart';
 
 class NetworkSelectionMenu extends StatefulWidget {

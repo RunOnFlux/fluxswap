@@ -2,7 +2,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluxswap/fluxexchangepage/fluxexchangescreen.dart';
 import 'package:fluxswap/web3/walletdrawer.dart';
 import 'package:fluxswap/web3/networkselectionmenu.dart';
-import 'package:fluxswap/provider/fluxswapprovider.dart';
+import 'package:fluxswap/changenotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';
@@ -56,27 +56,35 @@ class _CryptoSwapPageState extends State<CryptoSwapPage> {
       create: (context) => FluxSwapProvider()..init(),
       builder: (context, child) {
         return Scaffold(
-          // backgroundColor: const Color(0xFF1b202b),
-          key: _scaffoldKey,
-          endDrawer: const WalletDrawer(),
-          body: Stack(
-            children: [
-              Container(
-                alignment: Alignment.topLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: SvgPicture.asset(
-                  '/images/flux-icon.svg',
-                  width: 80,
-                  height: 80,
-                ),
-              ),
-              NetworkSelectionMenu(
-                scaffoldKey: _scaffoldKey,
-              ),
-              const FluxExchangeScreen(),
-            ],
-          ),
-        );
+            // backgroundColor: const Color(0xFF1b202b),
+            key: _scaffoldKey,
+            endDrawer: const WalletDrawer(),
+            body:
+                Consumer<FluxSwapProvider>(builder: (context, provider, child) {
+              // Listen for errors and show them as they appear
+              if (provider.errors.isNotEmpty) {
+                Future.microtask(
+                    () => _showErrorSnackbar(context, provider.errors.last));
+              }
+
+              return Stack(
+                children: [
+                  Container(
+                    alignment: Alignment.topLeft,
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: SvgPicture.asset(
+                      '/images/flux-icon.svg',
+                      width: 80,
+                      height: 80,
+                    ),
+                  ),
+                  NetworkSelectionMenu(
+                    scaffoldKey: _scaffoldKey,
+                  ),
+                  const FluxExchangeScreen(),
+                ],
+              );
+            }));
       },
     );
   }
@@ -84,6 +92,14 @@ class _CryptoSwapPageState extends State<CryptoSwapPage> {
   void _showSnackbar() {
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text("Text Copied")));
+  }
+
+  void _showErrorSnackbar(BuildContext context, String error) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(error),
+      duration: const Duration(seconds: 2),
+      backgroundColor: Colors.red,
+    ));
   }
 
   void _copytext(String copytext) {

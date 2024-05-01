@@ -1,14 +1,12 @@
-import 'dart:html';
-import 'dart:io';
-
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluxswap/fluxexchangepage/amountbox/amountcontainerbox.dart';
 import 'package:fluxswap/api/requests.dart';
 import 'package:fluxswap/fluxexchangepage/buttons/reseverswapbutton.dart';
+import 'package:fluxswap/fluxexchangepage/statusindicator.dart';
 import 'package:fluxswap/helper/modals.dart';
-import 'package:fluxswap/provider/fluxswapprovider.dart';
+import 'package:fluxswap/changenotifier.dart';
 import 'package:fluxswap/fluxexchangepage/sendflux.dart';
 import 'package:fluxswap/fluxswapstats/totalswaps.dart';
 import 'package:fluxswap/fluxexchangepage/addressbox/addresstextformfield.dart';
@@ -48,6 +46,8 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
             fontSize: 60,
           ),
         ),
+        const StatusIndicator(),
+        const SizedBox(height: 20),
         const Text(
           'Swap Flux between networks with ease',
           style: TextStyle(
@@ -84,10 +84,6 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                   !provider.isSwapCreated) {
                 return const SwapCard();
               } else if (provider.isSwapCreated) {
-                String message = 'Your swap failed to submit';
-                if (provider.isSwapValid) {
-                  message = 'Your swap was successful';
-                }
                 return AlertDialog(
                   alignment: Alignment.center,
                   content: Column(
@@ -101,6 +97,22 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                         ),
                       ),
                       const Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Status: ${provider.swapResponse.status}",
+                            style: TextStyle(
+                                // color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: provider.swapResponse.status == "hold"
+                                    ? Colors.red
+                                    : Colors.green),
+                          ),
+                        ],
+                      ),
                       Row(
                         // mainAxisAlignment: MainAxisAlignment.,
                         // crossAxisAlignment: CrossAxisAlignment.center,
@@ -186,7 +198,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "${provider.submittedFromCurrency}",
+                            provider.submittedFromCurrency,
                             style: const TextStyle(
                               // color: Colors.white,
                               fontSize: 18,
@@ -197,20 +209,20 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                       ),
                       Row(
                         children: [
-                          Text(
+                          const Text(
                             "Explorer:",
-                            style: const TextStyle(
+                            style: TextStyle(
                               // color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           InkWell(
                               child: Padding(
                                 padding: const EdgeInsets.all(2.0),
                                 child: Text(
-                                  '${provider.swapResponse.txidFrom}',
+                                  provider.swapResponse.txidFrom,
                                   style: const TextStyle(
                                     fontSize: 18,
                                     color: Colors.blue,
@@ -227,7 +239,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                               }),
                         ],
                       ),
-                      Divider(),
+                      const Divider(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -242,7 +254,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "${provider.submittedFromCurrency}",
+                            provider.submittedFromCurrency,
                             style: const TextStyle(
                               // color: Colors.white,
                               fontSize: 18,
@@ -269,7 +281,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "${provider.submittedToCurrency}",
+                            provider.submittedToCurrency,
                             style: const TextStyle(
                               // color: Colors.white,
                               fontSize: 18,

@@ -31,6 +31,14 @@ class MetamaskReturn {
 }
 
 // ignore: constant_identifier_names
+enum Wallet {
+  METAMASK,
+  WALLETCONNECT,
+  ZELCORE,
+  SSP,
+}
+
+// ignore: constant_identifier_names
 enum Coin { FLUX, ETH, BSC, AVAX, MATIC, BASE }
 
 class CoinDetails {
@@ -69,6 +77,29 @@ class CoinDetails {
 class FluxSwapProvider extends ChangeNotifier {
   // Date
   DateFormat dateFormat = DateFormat("MM-dd-yyyy HH:mm");
+
+  // Error Tracking
+  final List<String> _errors = [];
+  void addError(String error) {
+    _errors.add(error);
+    notifyListeners();
+
+    // Automatically clear the error after 10 seconds
+    Future.delayed(const Duration(seconds: 10), () {
+      _errors.remove(error);
+      notifyListeners();
+    });
+  }
+
+  // Enabled wallets
+  Map<Wallet, bool> walletstatuses = {
+    Wallet.METAMASK: true,
+    Wallet.WALLETCONNECT: false,
+    Wallet.ZELCORE: false,
+    Wallet.SSP: false,
+  };
+
+  List<String> get errors => _errors;
 
   // Metamask stuff
   static const operatingChain = 4;
@@ -152,7 +183,8 @@ class FluxSwapProvider extends ChangeNotifier {
   //     txidFrom:
   //         "0x15179093bf68a23a621a6e1a3f5bc02bf5dfa7a422dbd71c1252aaf298a2b670",
   //     fee: 3,
-  //     timestamp: 1714498454333);
+  //     timestamp: 1714498454333,
+  //     status: "hold");
 
   bool _isSwapCreated = false; // Set by the Approved Button
   bool _isSwapValid = false; // Set by the Approved Button
@@ -171,7 +203,6 @@ class FluxSwapProvider extends ChangeNotifier {
   bool get isSwapValid => _isSwapValid;
   bool get isSwapCreated => _isSwapCreated;
 
-  bool isSwapInfoLoading = true;
   bool hasSwapInfoError = false;
   String errorSwapInfoMessage = "";
 
@@ -208,29 +239,37 @@ class FluxSwapProvider extends ChangeNotifier {
   }
 
   Future<void> connectMetamask() async {
-    if (isEnabled) {
-      final accs = await ethereum!.requestAccount();
-      account = accs[0];
+    try {
+      if (isEnabled) {
+        final accs = await ethereum!.requestAccount();
+        account = accs[0];
 
-      if (accs.isNotEmpty) currentAddress = accs.first;
+        if (accs.isNotEmpty) currentAddress = accs.first;
 
-      currentChain = await ethereum!.getChainId();
+        currentChain = await ethereum!.getChainId();
 
-      coinInfo.forEach((key, value) {
-        if (value.chainId == currentChain) {
-          selectedChain = value.chainName;
-          previousSelectedChain = selectedChain;
-          selectedFromCurrency = value.swapingName;
-          if (selectedToCurrency == selectedFromCurrency) {
-            selectedToCurrency = 'FLUX';
+        coinInfo.forEach((key, value) {
+          if (value.chainId == currentChain) {
+            selectedChain = value.chainName;
+            previousSelectedChain = selectedChain;
+            selectedFromCurrency = value.swapingName;
+            if (selectedToCurrency == selectedFromCurrency) {
+              selectedToCurrency = 'FLUX';
+            }
           }
-        }
-      });
+        });
 
-      getBalance();
-      getFluxTokenBalance(currentChain);
+        getBalance();
+        getFluxTokenBalance(currentChain);
 
-      notifyListeners();
+        notifyListeners();
+      } else {
+        addError("Metamask plugin not found");
+      }
+    } on EthereumException catch (error) {
+      addError(error.message);
+    } catch (error) {
+      addError(error.toString());
     }
   }
 
@@ -445,12 +484,11 @@ class FluxSwapProvider extends ChangeNotifier {
   init() {
     getSwapInfo().then((response) {
       swapInfoResponse = response;
-      isSwapInfoLoading = false;
       updateReceivedAmount();
     }).catchError((error) {
+      addError(error);
       hasSwapInfoError = true;
       errorSwapInfoMessage = error.toString();
-      isSwapInfoLoading = false;
     });
 
     if (isEnabled) {
