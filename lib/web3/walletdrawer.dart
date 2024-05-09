@@ -48,10 +48,11 @@ class WalletDrawer extends StatelessWidget {
               ),
             ),
             title: const Text('WalletConnect'),
-            enabled: (provider.walletstatuses[Wallet.WALLETCONNECT] ?? false) ==
-                true,
+            enabled:
+                (provider.walletstatuses[WALLETS.WALLETCONNECT] ?? false) ==
+                    true,
             subtitle:
-                (provider.walletstatuses[Wallet.WALLETCONNECT] ?? false) ==
+                (provider.walletstatuses[WALLETS.WALLETCONNECT] ?? false) ==
                         false
                     ? const Text('Coming soon')
                     : null,

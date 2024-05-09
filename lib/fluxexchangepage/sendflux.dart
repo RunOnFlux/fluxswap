@@ -148,7 +148,6 @@ class _SwapCardState extends State<SwapCard> {
                                               provider
                                                   .sendToken(
                                                       provider.currentChain,
-                                                      provider.fromAddress,
                                                       getSwapAddress(
                                                           provider
                                                               .swapInfoResponse,
@@ -163,8 +162,8 @@ class _SwapCardState extends State<SwapCard> {
                                                   final swapRequest = SwapRequest(
                                                       amountFrom:
                                                           provider.fromAmount,
-                                                      addressFrom:
-                                                          provider.fromAddress,
+                                                      addressFrom: provider
+                                                          .currentAddress,
                                                       addressTo:
                                                           provider.toAddress,
                                                       chainFrom: getCurrencyApiName(
@@ -190,12 +189,11 @@ class _SwapCardState extends State<SwapCard> {
                                                       provider.swapResponse =
                                                           response;
                                                       if (success) {
-                                                        provider.isSwapCreated =
+                                                        provider.swapToDisplay =
+                                                            response;
+                                                        provider.fShowSwapCard =
                                                             true;
-                                                        provider.isSwapValid =
-                                                            true;
-                                                        provider.swapMessage =
-                                                            message;
+                                                        provider.clearData();
                                                       } else {
                                                         provider.isSwapCreated =
                                                             true;
@@ -342,7 +340,7 @@ class _SwapCardState extends State<SwapCard> {
                             if (amount != 0) {
                               final swapRequest = SwapRequest(
                                   amountFrom: amount,
-                                  addressFrom: provider.fromAddress,
+                                  addressFrom: provider.currentAddress,
                                   addressTo: provider.toAddress,
                                   chainFrom: getCurrencyApiName(
                                       provider.submittedFromCurrency),
@@ -359,10 +357,9 @@ class _SwapCardState extends State<SwapCard> {
                                   print(
                                       "Received: ${response.toJson().toString()}");
                                   if (success) {
-                                    provider.swapResponse = response;
-                                    provider.isSwapCreated = true;
-                                    provider.isSwapValid = true;
-                                    provider.swapMessage = message;
+                                    provider.swapToDisplay = response;
+                                    provider.fShowSwapCard = true;
+                                    provider.clearData();
                                   } else {
                                     provider.swapResponse = response;
                                     provider.isSwapCreated = true;

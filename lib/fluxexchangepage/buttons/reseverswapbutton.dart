@@ -23,6 +23,7 @@ class ReserveSwapButton extends StatelessWidget {
           ? null
           : () {
               if (formKey.currentState!.validate()) {
+                provider.addRecentlyUsedZelid(zelid);
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {

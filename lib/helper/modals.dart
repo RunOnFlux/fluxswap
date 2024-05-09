@@ -1,6 +1,23 @@
 import 'package:flutter_web3/flutter_web3.dart';
 
+// ignore: constant_identifier_names
+enum NETWORKS {
+  FLUX,
+  ETH,
+  BSC,
+  AVAX,
+  MATIC,
+  BASE,
+  BTC,
+  SOL,
+  TRX,
+  KDA,
+  ERG,
+  ALGO
+}
+
 class CoinInfo {
+  final NETWORKS network;
   final String apiname;
   final String swapingName;
   final String contractAddress;
@@ -10,7 +27,8 @@ class CoinInfo {
   final String qrcodeuri;
 
   CoinInfo(
-      {required this.apiname,
+      {required this.network,
+      required this.apiname,
       required this.swapingName,
       required this.contractAddress,
       required this.imageName,
@@ -35,6 +53,7 @@ var explorerInfo = {
 
 var coinInfo = {
   "FLUX": CoinInfo(
+      network: NETWORKS.FLUX,
       apiname: 'main',
       swapingName: "FLUX",
       contractAddress: "",
@@ -43,6 +62,7 @@ var coinInfo = {
       chainName: "Flux",
       qrcodeuri: "flux"),
   "FLUX-ETH": CoinInfo(
+      network: NETWORKS.ETH,
       apiname: 'eth',
       swapingName: "FLUX-ETH",
       contractAddress: "0x720CD16b011b987Da3518fbf38c3071d4F0D1495",
@@ -51,6 +71,7 @@ var coinInfo = {
       chainName: "Ethereum",
       qrcodeuri: "fluxeth"),
   "FLUX-BSC": CoinInfo(
+      network: NETWORKS.BSC,
       apiname: 'bsc',
       swapingName: "FLUX-BSC",
       contractAddress: "0xaFF9084f2374585879e8B434C399E29E80ccE635",
@@ -59,6 +80,7 @@ var coinInfo = {
       chainName: "BNB Chain",
       qrcodeuri: "fluxbsc"),
   "FLUX-SOL": CoinInfo(
+      network: NETWORKS.SOL,
       apiname: 'sol',
       swapingName: "FLUX-SOL",
       contractAddress: "FLUX1wa2GmbtSB6ZGi2pTNbVCw3zEeKnaPCkPtFXxqXe",
@@ -67,6 +89,7 @@ var coinInfo = {
       chainName: "Solona",
       qrcodeuri: "fluxsol"),
   "FLUX-TRX": CoinInfo(
+      network: NETWORKS.TRX,
       apiname: 'trx',
       swapingName: "FLUX-TRON",
       contractAddress: "TWr6yzukRwZ53HDe3bzcC8RCTbiKa4Zzb6",
@@ -75,6 +98,7 @@ var coinInfo = {
       chainName: "Tron",
       qrcodeuri: "fluxtrx"),
   "FLUX-AVAX": CoinInfo(
+      network: NETWORKS.AVAX,
       apiname: 'avax',
       swapingName: "FLUX-AVAX",
       contractAddress: "0xc4B06F17ECcB2215a5DBf042C672101Fc20daF55",
@@ -83,6 +107,7 @@ var coinInfo = {
       chainName: "Avalanche",
       qrcodeuri: "fluxavax"),
   "FLUX-ERG": CoinInfo(
+      network: NETWORKS.ERG,
       apiname: 'erg',
       swapingName: "FLUX-ERG",
       contractAddress:
@@ -92,6 +117,7 @@ var coinInfo = {
       chainName: "Erg",
       qrcodeuri: "fluxerg"),
   "FLUX-ALGO": CoinInfo(
+      network: NETWORKS.ALGO,
       apiname: 'algo',
       swapingName: "FLUX-ALGO",
       contractAddress: "1029804829",
@@ -100,6 +126,7 @@ var coinInfo = {
       chainName: "Alogrand",
       qrcodeuri: "fluxalgo"),
   "FLUX-MATIC": CoinInfo(
+      network: NETWORKS.MATIC,
       apiname: 'matic',
       swapingName: "FLUX-MATIC",
       contractAddress: "102980xA2bb7A68c46b53f6BbF6cC91C865Ae247A82E99B04829",
@@ -108,6 +135,7 @@ var coinInfo = {
       chainName: "Polygon",
       qrcodeuri: "fluxmatic"),
   "FLUX-BASE": CoinInfo(
+      network: NETWORKS.BASE,
       apiname: 'base',
       swapingName: "FLUX-BASE",
       contractAddress: "0xb008bdcf9cdff9da684a190941dc3dca8c2cdd44",
@@ -116,6 +144,7 @@ var coinInfo = {
       chainName: "Base",
       qrcodeuri: "fluxbase"),
   "FLUX-KDA": CoinInfo(
+      network: NETWORKS.KDA,
       apiname: 'kda',
       swapingName: "FLUX-KDA",
       contractAddress: "",
@@ -123,14 +152,15 @@ var coinInfo = {
       chainId: 0,
       chainName: "Kda",
       qrcodeuri: "fluxkda"),
-  // "FLUX-BTC": CoinInfo(
-  //     apiname: 'btc',
-  //     swapingName: "FLUX-BTC",
-  //     contractAddress: "",
-  //     imageName: '/images/flux-icon.svg',
-  //     chainId: 0,
-  //     chainName: "Bitcoin",
-  //     qrcodeuri: "fluxbtc"),
+  "FLUX-BTC": CoinInfo(
+      network: NETWORKS.BTC,
+      apiname: 'btc',
+      swapingName: "FLUX-BTC",
+      contractAddress: "",
+      imageName: '/images/flux-icon.svg',
+      chainId: 0,
+      chainName: "Bitcoin",
+      qrcodeuri: "fluxbtc"),
 };
 
 class MetaMaskNetworkInfo {
@@ -203,10 +233,27 @@ String getCurrencyApiName(String currency) {
   return '';
 }
 
+String getSwapNameFromApiName(String name) {
+  for (CoinInfo value in coinInfo.values) {
+    if (value.apiname == name) {
+      return value.swapingName;
+    }
+  }
+  return "Unknown Coin";
+}
+
 String getQRCodeUriName(String currency) {
   if (coinInfo.containsKey(currency)) {
     return coinInfo[currency]!.qrcodeuri;
   }
 
   return 'flux';
+}
+
+NETWORKS getNetworkFromSelectedCoin(String name) {
+  if (coinInfo.containsKey(name)) {
+    return coinInfo[name]!.network;
+  }
+
+  return NETWORKS.FLUX;
 }

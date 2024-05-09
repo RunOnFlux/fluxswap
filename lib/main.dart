@@ -6,6 +6,7 @@ import 'package:fluxswap/changenotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 void main() {
   runApp(const CryptoSwapApp());
@@ -68,20 +69,36 @@ class _CryptoSwapPageState extends State<CryptoSwapPage> {
               }
 
               return Stack(
+                alignment: Alignment.topLeft,
                 children: [
-                  Container(
-                    alignment: Alignment.topLeft,
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                  Positioned(
+                    top: 0,
+                    left: 0,
                     child: SvgPicture.asset(
                       '/images/flux-icon.svg',
                       width: 80,
                       height: 80,
                     ),
                   ),
-                  NetworkSelectionMenu(
-                    scaffoldKey: _scaffoldKey,
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: NetworkSelectionMenu(
+                      scaffoldKey: _scaffoldKey,
+                    ),
                   ),
-                  const FluxExchangeScreen(),
+                  // Positioned(
+                  //   top: 0,
+                  //   right: 0,
+                  //   child: W3MConnectWalletButton(service: provider.w3mService),
+                  // ),
+                  const Positioned.fill(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: 80), // Adjust padding to avoid overlap
+                      child: FluxExchangeScreen(),
+                    ),
+                  ),
                 ],
               );
             }));

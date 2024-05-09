@@ -16,7 +16,8 @@ class StatusIndicator extends StatelessWidget {
           provider.hasSwapInfoError ? Icons.error : Icons.check_circle,
           color: provider.hasSwapInfoError ? Colors.red : Colors.green,
         ),
-        const SizedBox(width: 8), // Provide some spacing between the icon and text
+        const SizedBox(
+            width: 8), // Provide some spacing between the icon and text
         Text(
           provider.hasSwapInfoError ? 'Flux Swap Offline' : 'Flux Swap Online',
           style: TextStyle(

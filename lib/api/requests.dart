@@ -19,7 +19,7 @@ class ReserveRequest {
     return {
       'chainFrom': chainFrom,
       'chainTo': chainTo,
-      'addressFrom': addressFrom,
+      // 'addressFrom': addressFrom,
       'addressTo': addressTo,
     };
   }
@@ -200,6 +200,51 @@ class SwapResponse {
       id: json['_id'] ?? '',
       status: json['status'],
     );
+  }
+}
+
+Future<List<SwapResponse>> fetchHistory(String zelid) async {
+  try {
+    // Define the headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+
+    if (zelid.isNotEmpty) {
+      headers.addAll({'zelid': zelid});
+    } else {
+      throw Exception('No Flux/Zelid provided');
+    }
+
+    const url = 'https://fusion.runonflux.io/swap/userhistory';
+    final response = await http.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      // Decode the JSON data into a List of SwapResponse
+      List<dynamic> jsonList = json.decode(response.body)['data'];
+      return jsonList
+          .map((jsonItem) => SwapResponse.fromJson(jsonItem))
+          .toList();
+    } else {
+      throw Exception('Failed to load swap status');
+    }
+  } catch (e) {
+    throw Exception('Failed to send fetchSwapStatus request: $e');
+  }
+}
+
+Future<SwapResponse> fetchSwapStatus(String swapId) async {
+  try {
+    final url = 'https://fusion.runonflux.io/swap/detail/$swapId';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      return SwapResponse.fromJson(json.decode(response.body)['data']);
+    } else {
+      throw Exception('Failed to load swap status');
+    }
+  } catch (e) {
+    throw Exception('Failed to send fetchSwapStatus request: $e');
   }
 }
 

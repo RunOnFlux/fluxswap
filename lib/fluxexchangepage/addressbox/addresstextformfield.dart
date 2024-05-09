@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:fluxswap/changenotifier.dart';
+import 'package:fluxswap/helper/addressvalidator.dart';
+import 'package:fluxswap/helper/modals.dart';
 import 'package:provider/provider.dart';
 
 class AddressTextFormField extends StatelessWidget {
   final String labelText;
   final GlobalKey<FormState> formKey;
+  final bool isFrom;
 
   const AddressTextFormField({
     super.key,
     required this.labelText,
     required this.formKey,
+    required this.isFrom,
   });
 
   @override
@@ -42,9 +46,9 @@ class AddressTextFormField extends StatelessWidget {
                             border: InputBorder.none,
                           ),
                           onChanged: (value) {
-                            if (labelText == "From Address") {
+                            if (isFrom) {
                               provider.fromAddress = value;
-                            } else if (labelText == "To Address") {
+                            } else {
                               provider.toAddress = value;
                             }
                             // Trigger the form validation on change if needed
@@ -54,6 +58,15 @@ class AddressTextFormField extends StatelessWidget {
                             if (value == null || value.isEmpty) {
                               return 'Address can\'t be blank'; // Customize this message based on the field if needed
                             }
+                            String currency = isFrom
+                                ? provider.selectedFromCurrency
+                                : provider.selectedToCurrency;
+                            NETWORKS network =
+                                getNetworkFromSelectedCoin(currency);
+                            if (!isValidAddress(value, network)) {
+                              return "Not Valid ${currency} address";
+                            }
+
                             return null;
                           },
                         ),

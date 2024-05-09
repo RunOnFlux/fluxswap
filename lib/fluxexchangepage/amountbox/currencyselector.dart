@@ -72,6 +72,13 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
           setState(() {
             if (widget.isFrom) {
               provider.selectedFromCurrency = newValue;
+
+              if (provider.isConnected) {
+                provider.previousSelectedChain = provider.selectedChain;
+                provider.selectedChain = getNetworkName(
+                    coinInfo[provider.selectedFromCurrency]!.chainId);
+                provider.requestChangeChainMetamask();
+              }
             } else {
               provider.selectedToCurrency = newValue;
               double receivedAmount = provider.updateReceivedAmount();

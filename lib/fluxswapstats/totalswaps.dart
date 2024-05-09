@@ -1,3 +1,4 @@
+import 'dart:async'; // Import for using Timer
 import 'package:flutter/material.dart';
 import 'package:fluxswap/fluxswapstats/swapstats.dart';
 
@@ -10,16 +11,36 @@ class TotalSwapsDisplay extends StatefulWidget {
 
 class _TotalSwapsDisplayState extends State<TotalSwapsDisplay> {
   late Future<int> futureTotalSwaps;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     futureTotalSwaps = fetchTotalSwaps();
+    _startAutoRefresh();
+  }
+
+  @override
+  void dispose() {
+    _timer
+        ?.cancel(); // Cancel the timer when the widget is disposed to prevent memory leaks
+    super.dispose();
+  }
+
+  void _startAutoRefresh() {
+    _timer = Timer.periodic(
+        const Duration(minutes: 10), (Timer t) => _refreshData());
+  }
+
+  void _refreshData() {
+    setState(() {
+      futureTotalSwaps = fetchTotalSwaps(); // Refresh the data and UI
+    });
   }
 
   Future<int> fetchTotalSwaps() async {
     SwapStats stats =
-        await fetchSwapStats(); // This calls your existing API fetch function
+        await fetchSwapStats(); // Assuming fetchSwapStats is an asynchronous API call
     return stats.data.totalSwaps;
   }
 
@@ -36,11 +57,23 @@ class _TotalSwapsDisplayState extends State<TotalSwapsDisplay> {
             );
           } else if (snapshot.hasError) {
             return const Center(
-                child: Text("Error fetching data swap statistics"));
+              child: Text("Error fetching data swap statistics"),
+            );
           }
         }
         // By default, show a loading spinner.
-        return const Center(child: CircularProgressIndicator());
+        return const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Total Swaps Performed:   ', style: TextStyle(fontSize: 24)),
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(),
+            )
+            // CircularProgressIndicator()
+          ],
+        );
       },
     );
   }

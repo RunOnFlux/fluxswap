@@ -1,9 +1,15 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_web3/ethers.dart';
 import 'package:flutter_web3/flutter_web3.dart';
 import 'package:fluxswap/api/requests.dart';
-import 'package:fluxswap/web3/fluxamount.dart';
 import 'package:fluxswap/api/swapinfo.dart';
+import 'package:fluxswap/helper/addressvalidator.dart';
+import 'package:fluxswap/web3/fluxamount.dart';
 import 'package:fluxswap/helper/modals.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluxswap/helper/modals.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+
 import 'package:intl/intl.dart';
 
 class ContractInfo {
@@ -31,39 +37,36 @@ class MetamaskReturn {
 }
 
 // ignore: constant_identifier_names
-enum Wallet {
+enum WALLETS {
   METAMASK,
   WALLETCONNECT,
   ZELCORE,
   SSP,
 }
 
-// ignore: constant_identifier_names
-enum Coin { FLUX, ETH, BSC, AVAX, MATIC, BASE }
-
 class CoinDetails {
-  static const Map<Coin, ContractInfo> details = {
-    Coin.FLUX: ContractInfo(
+  static const Map<NETWORKS, ContractInfo> details = {
+    NETWORKS.FLUX: ContractInfo(
       chain: 0,
       contractAddress: "",
     ),
-    Coin.ETH: ContractInfo(
+    NETWORKS.ETH: ContractInfo(
       chain: 1,
       contractAddress: "0x720CD16b011b987Da3518fbf38c3071d4F0D1495",
     ),
-    Coin.BSC: ContractInfo(
+    NETWORKS.BSC: ContractInfo(
       chain: 56,
       contractAddress: "0xaFF9084f2374585879e8B434C399E29E80ccE635",
     ),
-    Coin.AVAX: ContractInfo(
+    NETWORKS.AVAX: ContractInfo(
       chain: 43114,
       contractAddress: "0xc4B06F17ECcB2215a5DBf042C672101Fc20daF55",
     ),
-    Coin.MATIC: ContractInfo(
+    NETWORKS.MATIC: ContractInfo(
       chain: 137,
       contractAddress: "0xA2bb7A68c46b53f6BbF6cC91C865Ae247A82E99B",
     ),
-    Coin.BASE: ContractInfo(
+    NETWORKS.BASE: ContractInfo(
       chain: 8453,
       contractAddress: "0xb008bdcf9cdff9da684a190941dc3dca8c2cdd44",
     ),
@@ -76,7 +79,7 @@ class CoinDetails {
 
 class FluxSwapProvider extends ChangeNotifier {
   // Date
-  DateFormat dateFormat = DateFormat("MM-dd-yyyy HH:mm");
+  DateFormat dateFormat = DateFormat("EEE MMM d, yyyy, HH:mm");
 
   // Error Tracking
   final List<String> _errors = [];
@@ -92,11 +95,11 @@ class FluxSwapProvider extends ChangeNotifier {
   }
 
   // Enabled wallets
-  Map<Wallet, bool> walletstatuses = {
-    Wallet.METAMASK: true,
-    Wallet.WALLETCONNECT: false,
-    Wallet.ZELCORE: false,
-    Wallet.SSP: false,
+  Map<WALLETS, bool> walletstatuses = {
+    WALLETS.METAMASK: true,
+    WALLETS.WALLETCONNECT: true,
+    WALLETS.ZELCORE: false,
+    WALLETS.SSP: false,
   };
 
   List<String> get errors => _errors;
@@ -117,12 +120,13 @@ class FluxSwapProvider extends ChangeNotifier {
   // App Variables
   String selectedFromCurrency = 'FLUX';
   String selectedToCurrency = 'FLUX-ETH';
-  String fluxID = '';
+  String _fluxID = '';
   double fromAmount = 100;
   double toAmount = 90;
   String _fromAddress = '';
   String _toAddress = '';
   String swapTxid = '';
+  String searchSwapID = '';
 
   // Requests / Reponses
   late SwapInfoResponse swapInfoResponse;
@@ -132,8 +136,23 @@ class FluxSwapProvider extends ChangeNotifier {
   String _reservedMessage = '';
   ReserveRequest submittedRequest = ReserveRequest(
       chainFrom: "", chainTo: "", addressFrom: "", addressTo: "");
-  String submittedFromCurrency = '';
-  String submittedToCurrency = '';
+  String submittedFromCurrency = 'FLUX';
+  String submittedToCurrency = 'FLUX-ETH';
+
+  String get fluxID => _fluxID;
+  set fluxID(value) {
+    _fluxID = value;
+    notifyListeners();
+  }
+
+  bool _fShowSwapCard = false;
+
+  bool get fShowSwapCard => _fShowSwapCard;
+
+  set fShowSwapCard(value) {
+    _fShowSwapCard = value;
+    notifyListeners();
+  }
 
   bool get isReservedApproved => _isReservedApproved;
 
@@ -170,6 +189,45 @@ class FluxSwapProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<String> _recentUsedZelIds = [];
+
+  List<String> get recentUsedZelIds => _recentUsedZelIds;
+
+  void addRecentlyUsedZelid(String item) async {
+    _recentUsedZelIds.insert(0, item);
+    // Save to local storage
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('recentUsedZelIds', _recentUsedZelIds);
+    notifyListeners();
+  }
+
+  Future<void> loadRecentlyUsedZelid() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _recentUsedZelIds = prefs.getStringList('recentUsedZelIds') ?? [];
+    _recentUsedZelIds = _recentUsedZelIds.toSet().toList();
+    notifyListeners();
+  }
+
+  SwapResponse _swapToDisplay = SwapResponse(
+      id: "66325ae0ffb95a575f0bf4a4",
+      chainFrom: "bsc",
+      chainTo: "matic",
+      addressFrom: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
+      addressTo: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
+      expectedAmountFrom: 10000,
+      expectedAmountTo: 997,
+      txidFrom:
+          "0x15179093bf68a23a621a6e1a3f5bc02bf5dfa7a422dbd71c1252aaf298a2b670",
+      fee: 3,
+      timestamp: 1714498454333,
+      status: "hold");
+
+  SwapResponse get swapToDisplay => _swapToDisplay;
+  set swapToDisplay(value) {
+    _swapToDisplay = value;
+    notifyListeners();
+  }
+
   SwapResponse swapResponse = SwapResponse();
 // For testing final dialog box
   // SwapResponse swapResponse = SwapResponse(
@@ -178,8 +236,8 @@ class FluxSwapProvider extends ChangeNotifier {
   //     chainTo: "matic",
   //     addressFrom: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
   //     addressTo: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
-  //     expectedAmountFrom: 4,
-  //     expectedAmountTo: 1,
+  //     expectedAmountFrom: 10000,
+  //     expectedAmountTo: 997,
   //     txidFrom:
   //         "0x15179093bf68a23a621a6e1a3f5bc02bf5dfa7a422dbd71c1252aaf298a2b670",
   //     fee: 3,
@@ -206,7 +264,7 @@ class FluxSwapProvider extends ChangeNotifier {
   bool hasSwapInfoError = false;
   String errorSwapInfoMessage = "";
 
-  void resetForNewSwap() {
+  void clearData() {
     isReservedApproved = false;
     isReservedValid = false;
     isSwapCreated = false;
@@ -244,7 +302,7 @@ class FluxSwapProvider extends ChangeNotifier {
         final accs = await ethereum!.requestAccount();
         account = accs[0];
 
-        if (accs.isNotEmpty) currentAddress = accs.first;
+        if (accs.isNotEmpty) currentAddress = toChecksumAddress(accs.first);
 
         currentChain = await ethereum!.getChainId();
 
@@ -332,7 +390,7 @@ class FluxSwapProvider extends ChangeNotifier {
   }
 
   Future<MetamaskReturn> sendToken(
-      int chain, String spenderAddress, String recepient, BigInt amount) async {
+      int chain, String recepient, BigInt amount) async {
     try {
       if (isConnected) {
         final newAmount = FluxAmount.fromBigInt(FluxUnit.flux, amount);
@@ -345,22 +403,22 @@ class FluxSwapProvider extends ChangeNotifier {
 
         // Get the current allow amount to spend
         final currentAllowance =
-            await contract.allowance(spenderAddress, spenderAddress);
+            await contract.allowance(currentAddress, currentAddress);
 
         print('Current Allowance: $currentAllowance');
         print('Spending Amount Allowance: $amount');
 
         if (currentAllowance < amount) {
           // If not sufficient, increase the allowance
-          print('Increasing allowance for $spenderAddress...');
+          print('Increasing allowance for $currentAddress...');
           final approveTx =
-              await contract.approve(spenderAddress, newAmount.getInWei);
+              await contract.approve(currentAddress, newAmount.getInWei);
           await approveTx.wait();
           print('Allowance increased.');
         }
         // Now transfer the tokens
         final transaction = await contract.transferFrom(
-            spenderAddress, recepient, newAmount.getInWei);
+            currentAddress, recepient, newAmount.getInWei);
 
         // If you want to wait until the transaction is mined into a block
         // final receipt = await transaction.wait();
@@ -432,9 +490,9 @@ class FluxSwapProvider extends ChangeNotifier {
       return "Destination Address Empty";
     }
 
-    if (fromAddress.isEmpty) {
-      return "From Address Empty";
-    }
+    // if (fromAddress.isEmpty) {
+    //   return "From Address Empty";
+    // }
 
     return "";
   }
@@ -481,7 +539,9 @@ class FluxSwapProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  init() {
+// Register callbacks on the Web3App you'd like to use. See `Events` section.
+
+  init() async {
     getSwapInfo().then((response) {
       swapInfoResponse = response;
       updateReceivedAmount();
@@ -490,6 +550,8 @@ class FluxSwapProvider extends ChangeNotifier {
       hasSwapInfoError = true;
       errorSwapInfoMessage = error.toString();
     });
+
+    loadRecentlyUsedZelid();
 
     if (isEnabled) {
       ethereum!.onAccountsChanged((accounts) {
