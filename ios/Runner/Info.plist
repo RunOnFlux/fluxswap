@@ -35,12 +35,6 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
-	<array>
-  	<string>metamask</string>
-  	<string>trust</string>
-  	<string>safe</string>
-  	<string>rainbow</string>
-	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

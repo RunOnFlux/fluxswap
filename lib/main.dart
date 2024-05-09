@@ -1,12 +1,11 @@
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluxswap/fluxexchangepage/fluxexchangescreen.dart';
-import 'package:fluxswap/web3/walletdrawer.dart';
-import 'package:fluxswap/web3/networkselectionmenu.dart';
+import 'package:fluxswap/ui/fluxexchangepage/fluxexchangescreen.dart';
+import 'package:fluxswap/ui/web3/walletdrawer.dart';
+import 'package:fluxswap/ui/web3/networkselectionmenu.dart';
 import 'package:fluxswap/changenotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 void main() {
   runApp(const CryptoSwapApp());
@@ -87,11 +86,6 @@ class _CryptoSwapPageState extends State<CryptoSwapPage> {
                       scaffoldKey: _scaffoldKey,
                     ),
                   ),
-                  // Positioned(
-                  //   top: 0,
-                  //   right: 0,
-                  //   child: W3MConnectWalletButton(service: provider.w3mService),
-                  // ),
                   const Positioned.fill(
                     child: Padding(
                       padding: EdgeInsets.only(

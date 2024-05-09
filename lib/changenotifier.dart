@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_web3/ethers.dart';
 import 'package:flutter_web3/flutter_web3.dart';
-import 'package:fluxswap/api/requests.dart';
-import 'package:fluxswap/api/swapinfo.dart';
-import 'package:fluxswap/helper/addressvalidator.dart';
-import 'package:fluxswap/web3/fluxamount.dart';
-import 'package:fluxswap/helper/modals.dart';
+import 'package:fluxswap/api/models/reserve_model.dart';
+import 'package:fluxswap/api/models/swap_model.dart';
+import 'package:fluxswap/utils/addressvalidator.dart';
+import 'package:fluxswap/api/models/swapinfo_model.dart';
+import 'package:fluxswap/api/services/swap_service.dart';
+import 'package:fluxswap/ui/web3/fluxamount.dart';
+import 'package:fluxswap/utils/modals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluxswap/helper/modals.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:intl/intl.dart';
@@ -286,7 +287,7 @@ class FluxSwapProvider extends ChangeNotifier {
 
   // Controllers
   double updateReceivedAmount() {
-    double fee = getEstimatedFee(
+    double fee = SwapService.getEstimatedFee(
         fromAmount,
         getCurrencyApiName(selectedFromCurrency),
         getCurrencyApiName(selectedToCurrency),
@@ -470,7 +471,7 @@ class FluxSwapProvider extends ChangeNotifier {
   }
 
   String getQRData() {
-    return '${getQRCodeUriName(submittedFromCurrency)}:${getSwapAddress(swapInfoResponse, submittedFromCurrency)}?amount=$fromAmount';
+    return '${getQRCodeUriName(submittedFromCurrency)}:${SwapService.getSwapAddress(swapInfoResponse, submittedFromCurrency)}?amount=$fromAmount';
   }
 
   String verifyProviderData() {
@@ -542,11 +543,11 @@ class FluxSwapProvider extends ChangeNotifier {
 // Register callbacks on the Web3App you'd like to use. See `Events` section.
 
   init() async {
-    getSwapInfo().then((response) {
+    SwapService.getSwapInfo().then((response) {
       swapInfoResponse = response;
       updateReceivedAmount();
     }).catchError((error) {
-      addError(error);
+      addError(error.toString());
       hasSwapInfoError = true;
       errorSwapInfoMessage = error.toString();
     });
