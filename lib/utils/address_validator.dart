@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:fluxswap/models/enums.dart';
 import 'package:fluxswap/utils/base58.dart';
 import 'package:fluxswap/utils/bech32.dart';
-import 'package:fluxswap/utils/modals.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:validators/validators.dart';
 import 'dart:convert';

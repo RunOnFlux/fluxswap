@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluxswap/ui/fluxswapstats/swapstats.dart';
+import 'package:fluxswap/api/models/swap_stats.dart';
+import 'package:fluxswap/api/services/swap_service.dart';
 
 class SwapStatsWidget extends StatelessWidget {
   final SwapStats stats;
@@ -72,7 +73,7 @@ class _SwapStatsScreenState extends State<SwapStatsScreen> {
   @override
   void initState() {
     super.initState();
-    futureSwapStats = fetchSwapStats();
+    futureSwapStats = SwapService.fetchSwapStats();
   }
 
   @override

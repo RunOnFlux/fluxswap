@@ -1,4 +1,5 @@
-import 'package:fluxswap/utils/modals.dart';
+import 'package:fluxswap/api/models/swap_stats.dart';
+import 'package:fluxswap/utils/helpers.dart';
 import 'package:fluxswap/api/models/reserve_model.dart';
 import 'package:fluxswap/api/models/swap_model.dart';
 import 'package:fluxswap/api/models/swapinfo_model.dart';
@@ -101,6 +102,15 @@ class SwapService {
       return SwapInfoResponse.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load swap info');
+    }
+  }
+
+  static Future<SwapStats> fetchSwapStats() async {
+    final response = await http.get(Uri.parse('$_baseUrl/stats'));
+    if (response.statusCode == 200) {
+      return SwapStats.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load swap stats');
     }
   }
 

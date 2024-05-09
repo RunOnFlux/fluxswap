@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluxswap/changenotifier.dart';
+import 'package:fluxswap/constants/coin_details.dart';
+import 'package:fluxswap/constants/explorer_url_details.dart';
+import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:fluxswap/ui/fluxexchangepage/statusupdatewidget.dart';
-import 'package:fluxswap/utils/modals.dart';
+import 'package:fluxswap/utils/helpers.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -139,7 +141,7 @@ class SwapInfoCard extends StatelessWidget {
         ),
         onPressed: () {
           final String url =
-              "${explorerInfo[provider.swapToDisplay.chainFrom]}${provider.swapToDisplay.txidFrom}";
+              "${Explorer_Urls[provider.swapToDisplay.chainFrom]}${provider.swapToDisplay.txidFrom}";
           launchUrl(Uri.parse(url));
         },
         child: const Text("Show in explorer",
@@ -184,7 +186,7 @@ class SwapInfoCard extends StatelessWidget {
             '${provider.swapToDisplay.expectedAmountFrom} ${getSwapNameFromApiName(provider.swapToDisplay.chainFrom)}',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         SvgPicture.asset(
-            '${coinInfo[getSwapNameFromApiName(provider.swapToDisplay.chainFrom)]?.imageName}',
+            '${Coin_Details[getSwapNameFromApiName(provider.swapToDisplay.chainFrom)]?.imageName}',
             width: 80,
             height: 80),
         const Icon(Icons.arrow_right_alt, size: 40, color: Colors.green),
@@ -192,7 +194,7 @@ class SwapInfoCard extends StatelessWidget {
             '${provider.swapToDisplay.expectedAmountTo} ${getSwapNameFromApiName(provider.swapToDisplay.chainTo)}',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         SvgPicture.asset(
-            '${coinInfo[getSwapNameFromApiName(provider.swapToDisplay.chainTo)]?.imageName}',
+            '${Coin_Details[getSwapNameFromApiName(provider.swapToDisplay.chainTo)]?.imageName}',
             width: 80,
             height: 80),
       ],

@@ -2,7 +2,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluxswap/ui/fluxexchangepage/fluxexchangescreen.dart';
 import 'package:fluxswap/ui/web3/walletdrawer.dart';
 import 'package:fluxswap/ui/web3/networkselectionmenu.dart';
-import 'package:fluxswap/changenotifier.dart';
+import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';

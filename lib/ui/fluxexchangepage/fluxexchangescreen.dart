@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluxswap/api/models/reserve_model.dart';
 import 'package:provider/provider.dart';
-import 'package:fluxswap/changenotifier.dart';
+import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:fluxswap/ui/fluxexchangepage/addressbox/addresstextformfield.dart';
 import 'package:fluxswap/ui/fluxexchangepage/amountbox/amountcontainerbox.dart';
 import 'package:fluxswap/ui/fluxexchangepage/buttons/reseverswapbutton.dart';
@@ -12,7 +12,7 @@ import 'package:fluxswap/ui/fluxexchangepage/swaphistory.dart';
 import 'package:fluxswap/ui/fluxexchangepage/swapinfo.dart';
 import 'package:fluxswap/ui/fluxexchangepage/zelidbox/zelidfield.dart';
 import 'package:fluxswap/ui/fluxswapstats/totalswaps.dart';
-import 'package:fluxswap/utils/modals.dart';
+import 'package:fluxswap/utils/helpers.dart';
 
 class FluxExchangeScreen extends StatefulWidget {
   const FluxExchangeScreen({super.key});

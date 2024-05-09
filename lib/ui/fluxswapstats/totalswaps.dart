@@ -1,6 +1,7 @@
 import 'dart:async'; // Import for using Timer
 import 'package:flutter/material.dart';
-import 'package:fluxswap/ui/fluxswapstats/swapstats.dart';
+import 'package:fluxswap/api/models/swap_stats.dart';
+import 'package:fluxswap/api/services/swap_service.dart';
 
 class TotalSwapsDisplay extends StatefulWidget {
   const TotalSwapsDisplay({super.key});
@@ -39,8 +40,8 @@ class _TotalSwapsDisplayState extends State<TotalSwapsDisplay> {
   }
 
   Future<int> fetchTotalSwaps() async {
-    SwapStats stats =
-        await fetchSwapStats(); // Assuming fetchSwapStats is an asynchronous API call
+    SwapStats stats = await SwapService
+        .fetchSwapStats(); // Assuming fetchSwapStats is an asynchronous API call
     return stats.data.totalSwaps;
   }
 

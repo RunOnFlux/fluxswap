@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluxswap/changenotifier.dart';
+import 'package:fluxswap/constants/wallet_status.dart';
+import 'package:fluxswap/models/enums.dart';
+import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -8,7 +10,6 @@ class WalletDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<FluxSwapProvider>(context);
     return Drawer(
         child: Padding(
       padding: const EdgeInsets.all(16.0),
@@ -48,14 +49,10 @@ class WalletDrawer extends StatelessWidget {
               ),
             ),
             title: const Text('WalletConnect'),
-            enabled:
-                (provider.walletstatuses[WALLETS.WALLETCONNECT] ?? false) ==
-                    true,
-            subtitle:
-                (provider.walletstatuses[WALLETS.WALLETCONNECT] ?? false) ==
-                        false
-                    ? const Text('Coming soon')
-                    : null,
+            enabled: (Wallet_Status[WALLETS.WALLETCONNECT] ?? false) == true,
+            subtitle: (Wallet_Status[WALLETS.WALLETCONNECT] ?? false) == false
+                ? const Text('Coming soon')
+                : null,
             onTap: () => connectWallet('WalletConnect', context),
           ),
         ],

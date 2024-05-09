@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluxswap/changenotifier.dart';
-import 'package:fluxswap/utils/addressvalidator.dart';
+import 'package:fluxswap/providers/flux_swap_provider.dart';
+import 'package:fluxswap/utils/address_validator.dart';
 import 'package:provider/provider.dart';
 
 class ZelIDBox extends StatefulWidget {

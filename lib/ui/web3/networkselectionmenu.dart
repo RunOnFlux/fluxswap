@@ -1,8 +1,8 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluxswap/utils/modals.dart';
-import 'package:fluxswap/changenotifier.dart';
+import 'package:fluxswap/constants/network_details.dart';
+import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:provider/provider.dart';
 
 class NetworkSelectionMenu extends StatefulWidget {
@@ -48,14 +48,14 @@ class _NetworkSelectionMenuState extends State<NetworkSelectionMenu> {
                 PopupMenuButton<String>(
                   offset: const Offset(0, 40),
                   itemBuilder: (BuildContext context) {
-                    return metamaskNetworks.keys.map((String value) {
+                    return Metamask_Network_Info.keys.map((String value) {
                       bool isSelected = value == provider.selectedChain;
                       return PopupMenuItem<String>(
                         value: value,
                         child: Row(
                           children: [
                             SvgPicture.asset(
-                              metamaskNetworks[value]!.imageName,
+                              Metamask_Network_Info[value]!.imageName,
                               width: 30,
                               height: 30,
                             ),
@@ -80,7 +80,8 @@ class _NetworkSelectionMenuState extends State<NetworkSelectionMenu> {
                   child: Row(
                     children: [
                       SvgPicture.asset(
-                        metamaskNetworks[provider.selectedChain]!.imageName,
+                        Metamask_Network_Info[provider.selectedChain]!
+                            .imageName,
                         width: 30,
                         height: 30,
                       ),

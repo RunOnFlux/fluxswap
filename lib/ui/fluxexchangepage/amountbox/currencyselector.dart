@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluxswap/utils/modals.dart';
-import 'package:fluxswap/changenotifier.dart';
+import 'package:fluxswap/constants/coin_details.dart';
+import 'package:fluxswap/models/coin_info.dart';
+import 'package:fluxswap/utils/helpers.dart';
+import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:provider/provider.dart';
 
 class FromCurrencyDropdown extends StatefulWidget {
@@ -35,7 +37,7 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
         ),
         offset: const Offset(0, 50),
         itemBuilder: (BuildContext context) {
-          return coinInfo.values.toList().map((CoinInfo value) {
+          return Coin_Details.values.toList().map((CoinInformation value) {
             bool isSelected = value.swapingName ==
                 (widget.isFrom
                     ? provider.selectedFromCurrency
@@ -76,7 +78,7 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
               if (provider.isConnected) {
                 provider.previousSelectedChain = provider.selectedChain;
                 provider.selectedChain = getNetworkName(
-                    coinInfo[provider.selectedFromCurrency]!.chainId);
+                    Coin_Details[provider.selectedFromCurrency]!.chainId);
                 provider.requestChangeChainMetamask();
               }
             } else {
@@ -100,7 +102,7 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                '${coinInfo[widget.isFrom ? provider.selectedFromCurrency : provider.selectedToCurrency]?.imageName}',
+                '${Coin_Details[widget.isFrom ? provider.selectedFromCurrency : provider.selectedToCurrency]?.imageName}',
                 width: 30,
                 height: 30,
               ),

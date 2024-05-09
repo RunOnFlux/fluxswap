@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluxswap/utils/modals.dart';
+import 'package:fluxswap/constants/coin_details.dart';
+import 'package:fluxswap/utils/helpers.dart';
 import 'package:fluxswap/api/models/swap_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'dart:async';
-import 'package:fluxswap/changenotifier.dart';
+import 'package:fluxswap/providers/flux_swap_provider.dart';
 
 class SwapHistoryList extends StatefulWidget {
   const SwapHistoryList({Key? key}) : super(key: key);
@@ -140,11 +141,11 @@ class _SwapHistoryListState extends State<SwapHistoryList> {
                             Row(
                               children: [
                                 SvgPicture.asset(
-                                    '${coinInfo[getSwapNameFromApiName(swapHistory[index].chainFrom)]?.imageName}'),
+                                    '${Coin_Details[getSwapNameFromApiName(swapHistory[index].chainFrom)]?.imageName}'),
                                 const Icon(Icons.arrow_right_alt,
                                     size: 40, color: Colors.green),
                                 SvgPicture.asset(
-                                    '${coinInfo[getSwapNameFromApiName(swapHistory[index].chainTo)]?.imageName}'),
+                                    '${Coin_Details[getSwapNameFromApiName(swapHistory[index].chainTo)]?.imageName}'),
                               ],
                             ),
                           ],
