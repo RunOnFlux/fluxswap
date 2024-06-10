@@ -5,10 +5,8 @@ import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:fluxswap/ui/fluxexchangepage/addressbox/addresstextformfield.dart';
 import 'package:fluxswap/ui/fluxexchangepage/amountbox/amountcontainerbox.dart';
 import 'package:fluxswap/ui/fluxexchangepage/buttons/reseverswapbutton.dart';
-import 'package:fluxswap/ui/fluxexchangepage/searchswap.dart';
 import 'package:fluxswap/ui/fluxexchangepage/sendflux.dart';
 import 'package:fluxswap/ui/fluxexchangepage/statusindicator.dart';
-import 'package:fluxswap/ui/fluxexchangepage/swaphistory.dart';
 import 'package:fluxswap/ui/fluxexchangepage/swapinfo.dart';
 import 'package:fluxswap/ui/fluxexchangepage/zelidbox/zelidfield.dart';
 import 'package:fluxswap/ui/fluxswapstats/totalswaps.dart';
@@ -36,17 +34,18 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
           flex: 1,
           child: Container(),
         ),
-        Container(
+        SizedBox(
           width: 825,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 100),
-              const Text('Flux Exchange', style: TextStyle(fontSize: 60)),
+              const Text('Flux Exchange',
+                  style: TextStyle(fontSize: 60, color: Colors.white)),
               const StatusIndicator(),
               const SizedBox(height: 20),
               const Text('Swap Flux between networks with ease',
-                  style: TextStyle(fontSize: 18)),
+                  style: TextStyle(fontSize: 18, color: Colors.white)),
               const SizedBox(height: 20),
               const TotalSwapsDisplay(),
               const SizedBox(height: 10),
@@ -54,21 +53,26 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
             ],
           ),
         ),
-        Column(
-          children: [
-            const SizedBox(height: 300),
-            const SearchSwap(),
-            const SizedBox(height: 10),
-            Container(
-              width: 300,
-              height: 550,
-              decoration: const BoxDecoration(
-                  color: Color.fromRGBO(237, 237, 237, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: const SwapHistoryList(),
-            ),
-          ],
-        ),
+        // TODO - Figure out where to put the search and history widgets
+        // Column(
+        //   children: [
+        //     Padding(
+        //       padding: EdgeInsets.only(top: 350),
+        //       child:
+        //           // const SizedBox(height: 300),
+        //           const SearchSwap(),
+        //     ),
+        //     const SizedBox(height: 10),
+        //     Container(
+        //       width: 300,
+        //       height: 550,
+        //       decoration: const BoxDecoration(
+        //           color: Color.fromRGBO(237, 237, 237, 1),
+        //           borderRadius: BorderRadius.all(Radius.circular(20))),
+        //       child: const SwapHistoryList(),
+        //     ),
+        //   ],
+        // ),
         Expanded(
           flex: 1,
           child: Container(),
@@ -129,21 +133,22 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                     formKey: _formKey,
                     toAmountController: toAmountController,
                     isFrom: true),
+                const SizedBox(width: 10),
+                AmountContainer(
+                    formKey: _formKey,
+                    toAmountController: toAmountController,
+                    isFrom: false)
               ],
             ),
             const SizedBox(height: 20),
             Row(
               children: [
                 AddressTextFormField(
-                  labelText: "To Address",
+                  selectedCurrency: provider.selectedToCurrency,
+                  labelText: "Receiving Address",
                   formKey: _formKey,
                   isFrom: false,
                 ),
-                const SizedBox(width: 2),
-                AmountContainer(
-                    formKey: _formKey,
-                    toAmountController: toAmountController,
-                    isFrom: false),
               ],
             ),
             const SizedBox(height: 20),

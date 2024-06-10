@@ -10,7 +10,7 @@ import 'dart:async';
 import 'package:fluxswap/providers/flux_swap_provider.dart';
 
 class SwapHistoryList extends StatefulWidget {
-  const SwapHistoryList({Key? key}) : super(key: key);
+  const SwapHistoryList({super.key});
 
   @override
   _SwapHistoryListState createState() => _SwapHistoryListState();
@@ -132,8 +132,8 @@ class _SwapHistoryListState extends State<SwapHistoryList> {
                         title: Column(
                           children: [
                             Text(
-                              "${provider.dateFormat.format(DateTime.fromMillisecondsSinceEpoch(swapHistory[index].timestamp).toLocal())}",
-                              style: TextStyle(
+                              provider.dateFormat.format(DateTime.fromMillisecondsSinceEpoch(swapHistory[index].timestamp).toLocal()),
+                              style: const TextStyle(
                                 fontSize: 10,
                               ),
                               textAlign: TextAlign.right,

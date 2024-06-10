@@ -52,7 +52,9 @@ dependencies:
   bip32: ^2.0.0
   bip39: ^1.0.6
   eth_sig_util: ^0.0.9
+  android_intent_plus: ^5.0.2
 
+  collection: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -79,6 +81,7 @@ flutter:
   assets:
     - assets/images/MetaMask_Fox.png
     - assets/images/zel-flux-logo.png
+    - assets/images/background2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

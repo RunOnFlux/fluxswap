@@ -54,7 +54,7 @@ class _TotalSwapsDisplayState extends State<TotalSwapsDisplay> {
           if (snapshot.hasData) {
             return Center(
               child: Text('Total Swaps Performed: ${snapshot.data}',
-                  style: const TextStyle(fontSize: 24)),
+                  style: const TextStyle(fontSize: 24, color: Colors.white)),
             );
           } else if (snapshot.hasError) {
             return const Center(

@@ -21,6 +21,7 @@ class StatusIndicator extends StatelessWidget {
         Text(
           provider.hasSwapInfoError ? 'Flux Swap Offline' : 'Flux Swap Online',
           style: TextStyle(
+              fontSize: 24,
               color: provider.hasSwapInfoError ? Colors.red : Colors.green),
         ),
       ],

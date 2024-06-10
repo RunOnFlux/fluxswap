@@ -40,11 +40,21 @@ class ReserveSwapButton extends StatelessWidget {
               }
             },
       style: ButtonStyle(
-        minimumSize: MaterialStateProperty.all(
-          const Size(double.infinity, 40),
-        ),
+        backgroundColor:
+            const MaterialStatePropertyAll(Color.fromARGB(255, 29, 26, 239)),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(4),
+              bottomRight: Radius.circular(20),
+              bottomLeft: Radius.circular(4)),
+        )),
       ),
-      child: const Text('Reserve Swap'),
+      child: const Text(
+        'Reserve Swap',
+        style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
     );
   }
 }

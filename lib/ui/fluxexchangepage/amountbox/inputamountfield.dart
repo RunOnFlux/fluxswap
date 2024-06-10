@@ -41,7 +41,7 @@ class _CurrencyInputFieldState extends State<InputAmountField> {
       keyboardType: TextInputType.number, // Keyboard type for numbers
       decoration: const InputDecoration(
         hintText: '0',
-        border: InputBorder.none,
+        // border: InputBorder.none,
       ),
       onChanged: (value) {
         setState(() {
@@ -83,8 +83,8 @@ class _CurrencyOutputFieldState extends State<OutputAmountField> {
       style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
       keyboardType: TextInputType.number, // Keyboard type for numbers
       decoration: const InputDecoration(
-        border: InputBorder.none,
-      ),
+          // border: InputBorder.none,
+          ),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Error';

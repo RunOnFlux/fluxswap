@@ -34,7 +34,7 @@ class _AmountContainerState extends State<AmountContainer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text('You pay', style: TextStyle(fontSize: 14)), // Label
+                const Text('Sending', style: TextStyle(fontSize: 14)), // Label
                 Expanded(
                   child: Row(
                     children: [
@@ -50,15 +50,16 @@ class _AmountContainerState extends State<AmountContainer> {
                     ],
                   ),
                 ),
-                const Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.end, // Aligns the text to the right
-                  children: [
-                    Text('Balance: \$100',
-                        style:
-                            TextStyle(fontSize: 10)), // Placeholder for balance
-                  ],
-                ),
+                // TODO add balances if we want to later
+                // const Row(
+                //   mainAxisAlignment:
+                //       MainAxisAlignment.end, // Aligns the text to the right
+                //   children: [
+                //     Text('Balance: \$100',
+                //         style:
+                //             TextStyle(fontSize: 10)), // Placeholder for balance
+                //   ],
+                // ),
               ],
             ),
           ));
@@ -75,7 +76,7 @@ class _AmountContainerState extends State<AmountContainer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text('You receive',
+                const Text('Receiving',
                     style: TextStyle(fontSize: 14)), // Label
                 Expanded(
                   child: Row(
@@ -92,15 +93,16 @@ class _AmountContainerState extends State<AmountContainer> {
                     ],
                   ),
                 ),
-                const Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.end, // Aligns the text to the right
-                  children: [
-                    Text('Balance: \$100',
-                        style:
-                            TextStyle(fontSize: 10)), // Placeholder for balance
-                  ],
-                ),
+                // TODO - add balances if we want to later
+                // const Row(
+                //   mainAxisAlignment:
+                //       MainAxisAlignment.end, // Aligns the text to the right
+                //   children: [
+                //     Text('Balance: \$100',
+                //         style:
+                //             TextStyle(fontSize: 10)), // Placeholder for balance
+                //   ],
+                // ),
               ],
             ),
           ));

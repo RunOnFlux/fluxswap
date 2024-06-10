@@ -87,7 +87,7 @@ class SwapInfoCard extends StatelessWidget {
                   "To Address: ${provider.swapToDisplay.addressTo}",
                   provider.swapToDisplay.addressTo),
               _buildExplorerButton(context),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               _buildCloseButton(context),
             ],
           ),
@@ -129,9 +129,9 @@ class SwapInfoCard extends StatelessWidget {
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor:
-              MaterialStatePropertyAll(Color.fromARGB(255, 238, 141, 255)),
+              const MaterialStatePropertyAll(Color.fromARGB(255, 238, 141, 255)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
+              const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(4),
@@ -158,9 +158,9 @@ class SwapInfoCard extends StatelessWidget {
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor:
-              MaterialStatePropertyAll(Color.fromARGB(255, 101, 101, 101)),
+              const MaterialStatePropertyAll(Color.fromARGB(255, 101, 101, 101)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
+              const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(4),

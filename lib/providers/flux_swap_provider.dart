@@ -14,6 +14,7 @@ import 'package:fluxswap/models/fluxamount.dart';
 import 'package:fluxswap/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
+// import 'package:web3dart/web3dart.dart';
 
 import 'package:intl/intl.dart';
 
@@ -51,8 +52,8 @@ class FluxSwapProvider extends ChangeNotifier {
   String previousSelectedChain = Metamask_Network_Info.entries.first.key;
 
   // App State Variables
-  String selectedFromCurrency = 'FLUX';
-  String selectedToCurrency = 'FLUX-ETH';
+  String _selectedFromCurrency = 'FLUX';
+  String _selectedToCurrency = 'FLUX-ETH';
   String _fluxID = '';
   String _fromAddress = '';
   String _toAddress = '';
@@ -60,6 +61,18 @@ class FluxSwapProvider extends ChangeNotifier {
   String searchSwapID = '';
   double fromAmount = 100;
   double toAmount = 90;
+
+  String get selectedFromCurrency => _selectedFromCurrency;
+  set selectedFromCurrency(String value) {
+    _selectedFromCurrency = value;
+    notifyListeners();
+  }
+
+  String get selectedToCurrency => _selectedToCurrency;
+  set selectedToCurrency(String value) {
+    _selectedToCurrency = value;
+    notifyListeners();
+  }
 
   String get fluxID => _fluxID;
   set fluxID(String value) {
@@ -179,8 +192,9 @@ class FluxSwapProvider extends ChangeNotifier {
   String verifyProviderData() {
     if (toAmount <= 0) return "Received Amount <= 0";
     if (fromAmount <= 0) return "From Amount <= 0";
-    if (submittedFromCurrency == submittedToCurrency)
+    if (submittedFromCurrency == submittedToCurrency) {
       return "Same Currencies selected";
+    }
     if (toAddress.isEmpty) return "Destination Address Empty";
     return "";
   }
@@ -301,6 +315,12 @@ class FluxSwapProvider extends ChangeNotifier {
 
         final currentAllowance =
             await contract.allowance(currentAddress, currentAddress);
+
+        print(await contract.name);
+        print(await contract.symbol);
+        print(await contract.decimals);
+        print("Current allowance $currentAllowance");
+        print("Trying to send  ${newAmount.getInWei}");
 
         if (currentAllowance < amount) {
           final approveTx =

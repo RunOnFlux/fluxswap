@@ -55,6 +55,23 @@ class WalletDrawer extends StatelessWidget {
                 : null,
             onTap: () => connectWallet('WalletConnect', context),
           ),
+          ListTile(
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(
+                  6), // Same or slightly less than Container border radius
+              child: SvgPicture.asset(
+                "/images/walletconnect-icon.svg",
+                width: 40, // Set your desired width for the SVG image
+                height: 40, // Set your desired height for the SVG image
+              ),
+            ),
+            title: const Text('SSP Wallet'),
+            enabled: (Wallet_Status[WALLETS.SSP] ?? false) == true,
+            subtitle: (Wallet_Status[WALLETS.SSP] ?? false) == false
+                ? const Text('Coming soon')
+                : null,
+            onTap: () => connectWallet('SSP Wallet', context),
+          ),
         ],
       ),
     ));

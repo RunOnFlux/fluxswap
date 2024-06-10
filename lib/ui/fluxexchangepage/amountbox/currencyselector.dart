@@ -93,7 +93,7 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
         },
         child: Container(
           margin: const EdgeInsets.fromLTRB(2.0, 0, 0, 0),
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(2.0),
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black),
               borderRadius: const BorderRadius.all(Radius.circular(20))),

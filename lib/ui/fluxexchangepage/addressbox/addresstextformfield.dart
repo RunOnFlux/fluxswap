@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 class AddressTextFormField extends StatelessWidget {
   final String labelText;
+  final String selectedCurrency;
   final GlobalKey<FormState> formKey;
   final bool isFrom;
 
@@ -15,6 +16,7 @@ class AddressTextFormField extends StatelessWidget {
     required this.labelText,
     required this.formKey,
     required this.isFrom,
+    required this.selectedCurrency,
   });
 
   @override
@@ -32,7 +34,8 @@ class AddressTextFormField extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(labelText, style: const TextStyle(fontSize: 14)), // Label
+                Text('$labelText for $selectedCurrency',
+                    style: const TextStyle(fontSize: 14)), // Label
                 Expanded(
                   child: Row(
                     children: [
@@ -44,7 +47,7 @@ class AddressTextFormField extends StatelessWidget {
                               TextInputType.text, // Keyboard type for numbers
                           decoration: const InputDecoration(
                             hintText: '0x',
-                            border: InputBorder.none,
+                            // border: InputBorder.none,
                           ),
                           onChanged: (value) {
                             if (isFrom) {
@@ -65,7 +68,7 @@ class AddressTextFormField extends StatelessWidget {
                             NETWORKS network =
                                 getNetworkFromSelectedCoin(currency);
                             if (!isValidAddress(value, network)) {
-                              return "Not Valid ${currency} address";
+                              return "Not Valid $currency address";
                             }
 
                             return null;

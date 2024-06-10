@@ -20,7 +20,7 @@ class _SearchSwapState extends State<SearchSwap> {
     return Container(
         padding: const EdgeInsets.all(10),
         width: 300,
-        height: 80,
+        height: 120,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
           color: const Color.fromRGBO(237, 237, 237, 1),
@@ -29,7 +29,7 @@ class _SearchSwapState extends State<SearchSwap> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(
-              child: Row(
+              child: Column(
                 children: [
                   Expanded(
                     child: TextFormField(
@@ -39,7 +39,7 @@ class _SearchSwapState extends State<SearchSwap> {
                       decoration: const InputDecoration(
                         labelText: "Swap ID",
                         hintText: 'Provide Swap ID',
-                        border: InputBorder.none,
+                        // border: InputBorder.none,
                       ),
                       onChanged: (value) {
                         provider.searchSwapID = value;
@@ -55,8 +55,24 @@ class _SearchSwapState extends State<SearchSwap> {
                   _isFetching
                       ? const CircularProgressIndicator()
                       : ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: const MaterialStatePropertyAll(
+                                Color.fromARGB(255, 29, 26, 239)),
+                            shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(4),
+                                  bottomRight: Radius.circular(20),
+                                  bottomLeft: Radius.circular(4)),
+                            )),
+                          ),
                           onPressed: () => _getSwapInfo(provider),
-                          child: const Text("Search"),
+                          child: const Text(
+                            "Search",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                 ],
               ),
