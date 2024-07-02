@@ -13,7 +13,7 @@ import 'package:fluxswap/api/services/swap_service.dart';
 import 'package:fluxswap/models/fluxamount.dart';
 import 'package:fluxswap/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
+// import 'package:web3modal_flutter/web3modal_flutter.dart';
 // import 'package:web3dart/web3dart.dart';
 
 import 'package:intl/intl.dart';
