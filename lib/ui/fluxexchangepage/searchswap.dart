@@ -20,16 +20,16 @@ class _SearchSwapState extends State<SearchSwap> {
     return Container(
         padding: const EdgeInsets.all(10),
         width: 300,
-        height: 120,
+        height: 80,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
-          color: const Color.fromRGBO(237, 237, 237, 1),
+          color: const Color.fromARGB(255, 214, 214, 214),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(
-              child: Column(
+              child: Row(
                 children: [
                   Expanded(
                     child: TextFormField(
@@ -52,12 +52,13 @@ class _SearchSwapState extends State<SearchSwap> {
                       },
                     ),
                   ),
+                  const SizedBox(width: 10),
                   _isFetching
                       ? const CircularProgressIndicator()
                       : ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor: const MaterialStatePropertyAll(
-                                Color.fromARGB(255, 29, 26, 239)),
+                                Color.fromARGB(255, 152, 149, 252)),
                             shape: MaterialStateProperty.all<
                                     RoundedRectangleBorder>(
                                 const RoundedRectangleBorder(

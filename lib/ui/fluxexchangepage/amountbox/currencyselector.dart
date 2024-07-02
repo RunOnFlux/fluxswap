@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluxswap/constants/coin_details.dart';
+import 'package:fluxswap/constants/network_details.dart';
 import 'package:fluxswap/models/coin_info.dart';
 import 'package:fluxswap/utils/helpers.dart';
 import 'package:fluxswap/providers/flux_swap_provider.dart';
@@ -76,10 +78,15 @@ class _CurrencyDropdownState extends State<FromCurrencyDropdown> {
               provider.selectedFromCurrency = newValue;
 
               if (provider.isConnected) {
-                provider.previousSelectedChain = provider.selectedChain;
-                provider.selectedChain = getNetworkName(
+                var selectedNetworkName = getNetworkName(
                     Coin_Details[provider.selectedFromCurrency]!.chainId);
-                provider.requestChangeChainMetamask();
+
+                // Check if provider is a metamask network.
+                if (Metamask_Network_Info.containsKey(selectedNetworkName)) {
+                  provider.previousSelectedChain = provider.selectedChain;
+                  provider.selectedChain = selectedNetworkName;
+                  provider.requestChangeChainMetamask();
+                }
               }
             } else {
               provider.selectedToCurrency = newValue;

@@ -36,7 +36,7 @@ class _CurrencyInputFieldState extends State<InputAmountField> {
   Widget build(BuildContext context) {
     final provider = Provider.of<FluxSwapProvider>(context);
     return TextFormField(
-      initialValue: '100',
+      initialValue: '15',
       style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
       keyboardType: TextInputType.number, // Keyboard type for numbers
       decoration: const InputDecoration(
@@ -64,8 +64,8 @@ class _CurrencyInputFieldState extends State<InputAmountField> {
         if (amount < 1) {
           return 'Minimum: 1';
         }
-        if (amount > 100000) {
-          return 'Max: 100000';
+        if (amount > 20) {
+          return 'Max: 20';
         }
         return null;
       },

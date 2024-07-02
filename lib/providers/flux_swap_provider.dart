@@ -48,19 +48,64 @@ class FluxSwapProvider extends ChangeNotifier {
   bool get isInOperatingChain => currentChain == operatingChain;
   bool get isConnected => isEnabled && currentAddress.isNotEmpty;
 
-  String selectedChain = Metamask_Network_Info.entries.first.key;
-  String previousSelectedChain = Metamask_Network_Info.entries.first.key;
+  String _selectedChain = Metamask_Network_Info.entries.first.key;
+  String _previousSelectedChain = Metamask_Network_Info.entries.first.key;
 
-  // App State Variables
+  // Setters and Getters for app state variables
+  String get selectedChain => _selectedChain;
+  set selectedChain(String value) {
+    _selectedChain = value;
+    notifyListeners();
+  }
+
+  // Setters and Getters for app state variables
+  String get previousSelectedChain => _previousSelectedChain;
+  set previousSelectedChain(String value) {
+    _previousSelectedChain = value;
+    notifyListeners();
+  }
+
+  // Initial App State Variables
   String _selectedFromCurrency = 'FLUX';
   String _selectedToCurrency = 'FLUX-ETH';
   String _fluxID = '';
-  String _fromAddress = '';
   String _toAddress = '';
-  String swapTxid = '';
-  String searchSwapID = '';
-  double fromAmount = 100;
-  double toAmount = 90;
+  double _fromAmount = 15;
+  double _toAmount = 0;
+
+  // TODO Remove when confirmed not needed anymore
+  String _fromAddress = ''; // Not needed anymore, keeping in the code for now
+
+  // Transaction Hash from metamask or user manually inputed
+  String _swapTxid = '';
+
+  // User inputed swap id to search for trade info
+  String _searchSwapID = '';
+
+  // Setters and Getters for app state variables
+  String get swapTxid => _swapTxid;
+  set swapTxid(String value) {
+    _swapTxid = value;
+    notifyListeners();
+  }
+
+  String get searchSwapID => _searchSwapID;
+  set searchSwapID(String value) {
+    _searchSwapID = value;
+    notifyListeners();
+  }
+
+  double get fromAmount => _fromAmount;
+  set fromAmount(double value) {
+    _fromAmount = value;
+    notifyListeners();
+  }
+
+  double get toAmount => _toAmount;
+  set toAmount(double value) {
+    _toAmount = value;
+    notifyListeners();
+  }
 
   String get selectedFromCurrency => _selectedFromCurrency;
   set selectedFromCurrency(String value) {
@@ -96,13 +141,36 @@ class FluxSwapProvider extends ChangeNotifier {
   late SwapInfoResponse swapInfoResponse;
   bool hasSwapInfoError = false;
   String errorSwapInfoMessage = "";
+
+  // Reserve State Variables
   bool _isReservedApproved = false;
   bool _isReservedValid = false;
   String _reservedMessage = '';
-  ReserveRequest submittedRequest = ReserveRequest(
+
+  // Maintain seperation from what user selected and what was submitted via api
+  String _submittedFromCurrency = 'FLUX';
+  String _submittedToCurrency = 'FLUX-ETH';
+
+  ReserveRequest _submittedRequest = ReserveRequest(
       chainFrom: "", chainTo: "", addressFrom: "", addressTo: "");
-  String submittedFromCurrency = 'FLUX';
-  String submittedToCurrency = 'FLUX-ETH';
+
+  ReserveRequest get submittedRequest => _submittedRequest;
+  set submittedRequest(ReserveRequest value) {
+    _submittedRequest = value;
+    notifyListeners();
+  }
+
+  String get submittedFromCurrency => _submittedFromCurrency;
+  set submittedFromCurrency(String value) {
+    _submittedFromCurrency = value;
+    notifyListeners();
+  }
+
+  String get submittedToCurrency => _submittedToCurrency;
+  set submittedToCurrency(String value) {
+    _submittedToCurrency = value;
+    notifyListeners();
+  }
 
   bool get isReservedApproved => _isReservedApproved;
   set isReservedApproved(bool value) {
@@ -122,20 +190,29 @@ class FluxSwapProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool fShowSwapCard = false;
+  // Used in testing, able to bypass initial page
+  bool _fShowSwapCard = false;
+
+  // Details to show when fShowSwapCard = true
   SwapResponse _swapToDisplay = SwapResponse(
       id: "66325ae0ffb95a575f0bf4a4",
       chainFrom: "bsc",
       chainTo: "matic",
       addressFrom: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
       addressTo: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
-      expectedAmountFrom: 10000,
+      expectedAmountFrom: 1000,
       expectedAmountTo: 997,
       txidFrom:
           "0x15179093bf68a23a621a6e1a3f5bc02bf5dfa7a422dbd71c1252aaf298a2b670",
       fee: 3,
       timestamp: 1714498454333,
       status: "hold");
+
+  bool get fShowSwapCard => _fShowSwapCard;
+  set fShowSwapCard(bool value) {
+    _fShowSwapCard = value;
+    notifyListeners();
+  }
 
   SwapResponse get swapToDisplay => _swapToDisplay;
   set swapToDisplay(SwapResponse value) {

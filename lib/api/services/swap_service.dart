@@ -33,6 +33,11 @@ class SwapService {
     final response = await http.get(Uri.parse('$_baseUrl/detail/$swapId'));
 
     if (response.statusCode == 200) {
+      var decoded = json.decode(response.body);
+      if (decoded['status'] == 'error') {
+        throw Exception('Invalid Swap ID');
+      }
+
       return SwapResponse.fromJson(json.decode(response.body)['data']);
     } else {
       throw Exception('Failed to load swap status');

@@ -12,6 +12,8 @@ import 'package:fluxswap/ui/fluxexchangepage/zelidbox/zelidfield.dart';
 import 'package:fluxswap/ui/fluxswapstats/totalswaps.dart';
 import 'package:fluxswap/utils/helpers.dart';
 
+import 'searchswap.dart';
+
 class FluxExchangeScreen extends StatefulWidget {
   const FluxExchangeScreen({super.key});
 
@@ -40,7 +42,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 100),
-              const Text('Flux Exchange',
+              const Text('Flux Exchange (Internal Only)',
                   style: TextStyle(fontSize: 60, color: Colors.white)),
               const StatusIndicator(),
               const SizedBox(height: 20),
@@ -49,6 +51,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
               const SizedBox(height: 20),
               const TotalSwapsDisplay(),
               const SizedBox(height: 10),
+              const SearchSwap(),
               mainContent(provider),
             ],
           ),

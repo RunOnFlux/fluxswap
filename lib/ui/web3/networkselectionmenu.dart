@@ -41,7 +41,6 @@ class _NetworkSelectionMenuState extends State<NetworkSelectionMenu> {
       child: Consumer<FluxSwapProvider>(
         builder: (context, provider, child) {
           if (provider.isConnected) {
-            _closeEndDrawer();
             return Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -85,7 +84,10 @@ class _NetworkSelectionMenuState extends State<NetworkSelectionMenu> {
                         width: 30,
                         height: 30,
                       ),
-                      const Icon(Icons.arrow_drop_down), // Dropdown symbol
+                      const Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.white,
+                      ), // Dropdown symbol
                     ],
                   ),
                 ),
@@ -99,12 +101,17 @@ class _NetworkSelectionMenuState extends State<NetworkSelectionMenu> {
                       child: Text(
                         '${provider.currentAddress.substring(0, 7)}...${provider.currentAddress.substring(provider.currentAddress.length - 4)}',
                         style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ),
                     IconButton(
                       onPressed: () => _copyText(provider.currentAddress),
-                      icon: const Icon(Icons.content_copy_rounded),
+                      icon: const Icon(
+                        Icons.content_copy_rounded,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 )

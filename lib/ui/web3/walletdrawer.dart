@@ -36,7 +36,7 @@ class WalletDrawer extends StatelessWidget {
               ),
             ),
             title: const Text('MetaMask'),
-            onTap: () => context.read<FluxSwapProvider>().connectMetamask(),
+            onTap: () => connectMetamask(context),
           ),
           ListTile(
             leading: ClipRRect(
@@ -78,6 +78,11 @@ class WalletDrawer extends StatelessWidget {
   }
 
   void connectWalleConnect() {}
+
+  void connectMetamask(BuildContext context) {
+    Navigator.of(context).pop(); // Close the drawer
+    context.read<FluxSwapProvider>().connectMetamask();
+  }
 
   void connectWallet(String walletName, BuildContext context) {
     Navigator.of(context).pop(); // Close the drawer

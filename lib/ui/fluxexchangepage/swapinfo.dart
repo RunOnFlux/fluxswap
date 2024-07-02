@@ -129,7 +129,7 @@ class SwapInfoCard extends StatelessWidget {
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor:
-              const MaterialStatePropertyAll(Color.fromARGB(255, 238, 141, 255)),
+              const MaterialStatePropertyAll(Color.fromARGB(255, 29, 26, 239)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -157,8 +157,8 @@ class SwapInfoCard extends StatelessWidget {
       height: 30,
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor:
-              const MaterialStatePropertyAll(Color.fromARGB(255, 101, 101, 101)),
+          backgroundColor: const MaterialStatePropertyAll(
+              Color.fromARGB(255, 101, 101, 101)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
