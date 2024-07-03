@@ -36,33 +36,33 @@ ContractInfo getNetworkDetails(NETWORKS network) {
 
 Map<String, MetaMaskNetworkInfo> Metamask_Network_Info = {
   'Ethereum': MetaMaskNetworkInfo(
-      imageName: '/images/eth-icon.svg',
+      imageName: 'assets/images/eth-icon.svg',
       chainId: 1,
       currencyParams: CurrencyParams(name: 'ETH', symbol: 'ETH', decimals: 18),
       rpcurls: ['https://mainnet.infura.io/v3/'],
       blockexplorerurls: ['https://etherscan.io']),
   'BNB Chain': MetaMaskNetworkInfo(
-      imageName: '/images/bnb-icon.svg',
+      imageName: 'assets/images/bnb-icon.svg',
       chainId: 56,
       currencyParams: CurrencyParams(name: 'BNB', symbol: 'BNB', decimals: 18),
       rpcurls: ['https://bsc-dataseed.binance.org/'],
       blockexplorerurls: ['https://bscscan.com/']),
   'Polygon': MetaMaskNetworkInfo(
-      imageName: '/images/polygon-icon.svg',
+      imageName: 'assets/images/polygon-icon.svg',
       chainId: 137,
       currencyParams:
           CurrencyParams(name: 'MATIC', symbol: 'MATIC', decimals: 18),
       rpcurls: ['https://polygon-mainnet.infura.io'],
       blockexplorerurls: ['https://polygonscan.com/']),
   'Avalanche': MetaMaskNetworkInfo(
-      imageName: '/images/avax-icon.svg',
+      imageName: 'assets/images/avax-icon.svg',
       chainId: 43114,
       currencyParams:
           CurrencyParams(name: 'AVAX', symbol: 'AVAX', decimals: 18),
       rpcurls: ['https://api.avax.network/ext/bc/C/rpc'],
       blockexplorerurls: ['https://snowtrace.io/']),
   'Base': MetaMaskNetworkInfo(
-      imageName: '/images/base-icon.svg',
+      imageName: 'assets/images/base-icon.svg',
       chainId: 8453,
       currencyParams: CurrencyParams(name: 'ETH', symbol: 'ETH', decimals: 18),
       rpcurls: ['https://mainnet.base.org'],

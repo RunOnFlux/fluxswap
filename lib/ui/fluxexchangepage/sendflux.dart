@@ -170,7 +170,7 @@ class _SwapCardState extends State<SwapCard> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SvgPicture.asset("/images/metamask-icon.svg",
+                SvgPicture.asset("assets/images/metamask-icon.svg",
                     width: 24, height: 24),
                 const SizedBox(width: 10),
                 const Text('Send with Metamask'),

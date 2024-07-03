@@ -30,7 +30,7 @@ class WalletDrawer extends StatelessWidget {
               borderRadius: BorderRadius.circular(
                   6), // Same or slightly less than Container border radius
               child: SvgPicture.asset(
-                "/images/metamask-icon.svg",
+                "assets/images/metamask-icon.svg",
                 width: 40, // Set your desired width for the SVG image
                 height: 40, // Set your desired height for the SVG image
               ),
@@ -43,7 +43,7 @@ class WalletDrawer extends StatelessWidget {
               borderRadius: BorderRadius.circular(
                   6), // Same or slightly less than Container border radius
               child: SvgPicture.asset(
-                "/images/walletconnect-icon.svg",
+                "assets/images/walletconnect-icon.svg",
                 width: 40, // Set your desired width for the SVG image
                 height: 40, // Set your desired height for the SVG image
               ),
@@ -60,7 +60,7 @@ class WalletDrawer extends StatelessWidget {
               borderRadius: BorderRadius.circular(
                   6), // Same or slightly less than Container border radius
               child: SvgPicture.asset(
-                "/images/walletconnect-icon.svg",
+                "assets/images/walletconnect-icon.svg",
                 width: 40, // Set your desired width for the SVG image
                 height: 40, // Set your desired height for the SVG image
               ),
