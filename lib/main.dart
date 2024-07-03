@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';
 
-
 void main() {
   runApp(const CryptoSwapApp());
 }
@@ -71,7 +70,7 @@ class _CryptoSwapPageState extends State<CryptoSwapPage> {
               children: [
                 Positioned.fill(
                   child: Image.asset(
-                    '/images/background2.png', // Path to your background SVG file
+                    'assets/images/background2.png', // Path to your background SVG file
                     fit: BoxFit
                         .cover, // Ensures the SVG covers the entire screen
                   ),
@@ -112,7 +111,7 @@ class _CryptoSwapPageState extends State<CryptoSwapPage> {
                     child: Row(
                       children: [
                         SvgPicture.asset(
-                          '/images/flux-icon.svg',
+                          'assets/images/flux-icon.svg',
                           width: 80,
                           height: 80,
                         ),
