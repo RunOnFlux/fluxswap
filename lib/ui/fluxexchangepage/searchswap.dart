@@ -19,14 +19,15 @@ class _SearchSwapState extends State<SearchSwap> {
     final provider = Provider.of<FluxSwapProvider>(context);
     return Container(
         padding: const EdgeInsets.all(10),
-        width: 300,
-        height: 80,
+        width: 250,
+        height: 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
           color: const Color.fromARGB(255, 214, 214, 214),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Expanded(
               child: Row(
@@ -38,8 +39,6 @@ class _SearchSwapState extends State<SearchSwap> {
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                         labelText: "Swap ID",
-                        hintText: 'Provide Swap ID',
-                        // border: InputBorder.none,
                       ),
                       onChanged: (value) {
                         provider.searchSwapID = value;

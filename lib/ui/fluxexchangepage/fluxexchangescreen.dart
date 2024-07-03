@@ -24,6 +24,7 @@ class FluxExchangeScreen extends StatefulWidget {
 class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController toAmountController = TextEditingController();
+  bool isBridgeFlux = true;
 
   @override
   Widget build(BuildContext context) {
@@ -51,31 +52,10 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
               const SizedBox(height: 20),
               const TotalSwapsDisplay(),
               const SizedBox(height: 10),
-              const SearchSwap(),
               mainContent(provider),
             ],
           ),
         ),
-        // TODO - Figure out where to put the search and history widgets
-        // Column(
-        //   children: [
-        //     Padding(
-        //       padding: EdgeInsets.only(top: 350),
-        //       child:
-        //           // const SizedBox(height: 300),
-        //           const SearchSwap(),
-        //     ),
-        //     const SizedBox(height: 10),
-        //     Container(
-        //       width: 300,
-        //       height: 550,
-        //       decoration: const BoxDecoration(
-        //           color: Color.fromRGBO(237, 237, 237, 1),
-        //           borderRadius: BorderRadius.all(Radius.circular(20))),
-        //       child: const SwapHistoryList(),
-        //     ),
-        //   ],
-        // ),
         Expanded(
           flex: 1,
           child: Container(),
@@ -86,6 +66,122 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
 
   Widget mainContent(FluxSwapProvider provider) {
     toAmountController.text = "\u2248 ${provider.toAmount.toString()}";
+    return buildFormContainer(provider);
+  }
+
+  Widget buildFormContainer(FluxSwapProvider provider) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(25, 25, 25, 1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Colors.white, // Light white border
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 60, // Increase height here
+                  decoration: BoxDecoration(
+                    color: isBridgeFlux
+                        ? Colors.transparent
+                        : Color.fromRGBO(129, 129, 129, 1),
+                    borderRadius: const BorderRadius.only(
+                      topLeft:
+                          Radius.circular(10), // Radius for the top left corner
+                    ),
+                    border: isBridgeFlux
+                        ? null
+                        : const Border(
+                            bottom: BorderSide(
+                              color:
+                                  Colors.black, // Black border if not selected
+                              width: 2,
+                            ),
+                          ),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isBridgeFlux = true;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors
+                          .transparent, // Background already handled by Container
+                      padding: EdgeInsets.symmetric(
+                          vertical: 20), // Increase padding for larger button
+                    ),
+                    child: Text(
+                      'Bridge Flux',
+                      style: TextStyle(
+                        fontSize: 18, // Increase font size
+                        color: isBridgeFlux
+                            ? Colors.white
+                            : Color.fromARGB(255, 206, 206, 206),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  height: 60, // Increase height here
+                  decoration: BoxDecoration(
+                    color: !isBridgeFlux
+                        ? Colors.transparent
+                        : Color.fromRGBO(201, 201, 201, 0.6),
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(
+                          10), // Radius for the top right corner
+                    ),
+                    border: !isBridgeFlux
+                        ? null
+                        : const Border(
+                            bottom: BorderSide(
+                              color:
+                                  Colors.black, // Black border if not selected
+                              width: 2,
+                            ),
+                          ),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isBridgeFlux = false;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors
+                          .transparent, // Background already handled by Container
+                      padding: EdgeInsets.symmetric(
+                          vertical: 20), // Increase padding for larger button
+                    ),
+                    child: Text(
+                      'Swap Crypto',
+                      style: TextStyle(
+                        fontSize: 18, // Increase font size
+                        color: !isBridgeFlux
+                            ? Colors.white
+                            : Color.fromARGB(255, 206, 206, 206),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          isBridgeFlux ? bridgeFluxUI(provider) : swapCryptoUI(),
+        ],
+      ),
+    );
+  }
+
+  Widget bridgeFluxUI(FluxSwapProvider provider) {
     if (provider.fShowSwapCard) {
       return const SwapInfoCard();
     } else if (provider.isReservedApproved && !provider.isReservedValid) {
@@ -108,68 +204,70 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
     } else if (provider.isReservedApproved && !provider.isSwapCreated) {
       return const SwapCard();
     } else {
-      return formUI(provider); // Refactored form UI to a method for clarity
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                  child: const SearchSwap(), alignment: Alignment.centerRight),
+              const SizedBox(height: 20),
+              ZelIDBox(formKey: _formKey),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const SizedBox(width: 2),
+                  AmountContainer(
+                      formKey: _formKey,
+                      toAmountController: toAmountController,
+                      isFrom: true),
+                  const SizedBox(width: 10),
+                  AmountContainer(
+                      formKey: _formKey,
+                      toAmountController: toAmountController,
+                      isFrom: false)
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  AddressTextFormField(
+                    selectedCurrency: provider.selectedToCurrency,
+                    labelText: "Receiving Address",
+                    formKey: _formKey,
+                    isFrom: false,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 40,
+                child: ReserveSwapButton(
+                  zelid: provider.fluxID,
+                  reserveRequest: ReserveRequest(
+                      addressFrom: provider.currentAddress,
+                      addressTo: provider.toAddress,
+                      chainFrom:
+                          getCurrencyApiName(provider.selectedFromCurrency),
+                      chainTo: getCurrencyApiName(provider.selectedToCurrency)),
+                  formKey: _formKey,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
   }
 
-  Widget formUI(FluxSwapProvider provider) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ZelIDBox(formKey: _formKey),
-            // FluxIdTextFormField(
-            //     labelText: 'Flux ID / Zel ID', formKey: _formKey),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                // AddressTextFormField(
-                //   labelText: "From Address",
-                //   formKey: _formKey,
-                //   isFrom: true,
-                // ),
-                const SizedBox(width: 2),
-                AmountContainer(
-                    formKey: _formKey,
-                    toAmountController: toAmountController,
-                    isFrom: true),
-                const SizedBox(width: 10),
-                AmountContainer(
-                    formKey: _formKey,
-                    toAmountController: toAmountController,
-                    isFrom: false)
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                AddressTextFormField(
-                  selectedCurrency: provider.selectedToCurrency,
-                  labelText: "Receiving Address",
-                  formKey: _formKey,
-                  isFrom: false,
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 40,
-              child: ReserveSwapButton(
-                zelid: provider.fluxID,
-                reserveRequest: ReserveRequest(
-                    addressFrom: provider.currentAddress,
-                    addressTo: provider.toAddress,
-                    chainFrom:
-                        getCurrencyApiName(provider.selectedFromCurrency),
-                    chainTo: getCurrencyApiName(provider.selectedToCurrency)),
-                formKey: _formKey,
-              ),
-            ),
-          ],
-        ),
+  Widget swapCryptoUI() {
+    // Placeholder for Swap Crypto UI
+    return Center(
+      child: Text(
+        'Swap Crypto UI will be implemented later.',
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
