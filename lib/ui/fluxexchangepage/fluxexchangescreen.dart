@@ -72,10 +72,10 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
   Widget buildFormContainer(FluxSwapProvider provider) {
     return Container(
       decoration: BoxDecoration(
-        color: Color.fromRGBO(25, 25, 25, 1),
+        color: Color.fromRGBO(255, 255, 255, 1),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: Colors.white, // Light white border
+          color: Colors.black, // Light white border
           width: 1,
         ),
       ),
@@ -89,7 +89,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                   decoration: BoxDecoration(
                     color: isBridgeFlux
                         ? Colors.transparent
-                        : Color.fromRGBO(129, 129, 129, 1),
+                        : Color.fromRGBO(151, 151, 151, 1),
                     borderRadius: const BorderRadius.only(
                       topLeft:
                           Radius.circular(10), // Radius for the top left corner
@@ -100,7 +100,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                             bottom: BorderSide(
                               color:
                                   Colors.black, // Black border if not selected
-                              width: 2,
+                              width: 1,
                             ),
                           ),
                   ),
@@ -121,7 +121,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                       style: TextStyle(
                         fontSize: 18, // Increase font size
                         color: isBridgeFlux
-                            ? Colors.white
+                            ? Colors.black
                             : Color.fromARGB(255, 206, 206, 206),
                       ),
                     ),
@@ -134,7 +134,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                   decoration: BoxDecoration(
                     color: !isBridgeFlux
                         ? Colors.transparent
-                        : Color.fromRGBO(201, 201, 201, 0.6),
+                        : Color.fromRGBO(151, 151, 151, 1),
                     borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(
                           10), // Radius for the top right corner
@@ -145,7 +145,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                             bottom: BorderSide(
                               color:
                                   Colors.black, // Black border if not selected
-                              width: 2,
+                              width: 1,
                             ),
                           ),
                   ),
@@ -166,7 +166,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
                       style: TextStyle(
                         fontSize: 18, // Increase font size
                         color: !isBridgeFlux
-                            ? Colors.white
+                            ? Colors.black
                             : Color.fromARGB(255, 206, 206, 206),
                       ),
                     ),
@@ -211,8 +211,6 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                  child: const SearchSwap(), alignment: Alignment.centerRight),
               const SizedBox(height: 20),
               ZelIDBox(formKey: _formKey),
               const SizedBox(height: 20),
@@ -267,7 +265,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
     return Center(
       child: Text(
         'Swap Crypto UI will be implemented later.',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black),
       ),
     );
   }
