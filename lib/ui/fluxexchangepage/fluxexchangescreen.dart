@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluxswap/api/models/reserve_model.dart';
+import 'package:fluxswap/ui/fluxexchangepage/swaphistory.dart';
 import 'package:provider/provider.dart';
 import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:fluxswap/ui/fluxexchangepage/addressbox/addresstextformfield.dart';
@@ -14,6 +16,8 @@ import 'package:fluxswap/utils/helpers.dart';
 
 import 'searchswap.dart';
 
+enum SelectedButton { bridgeFlux, swapCrypto, search }
+
 class FluxExchangeScreen extends StatefulWidget {
   const FluxExchangeScreen({super.key});
 
@@ -24,41 +28,142 @@ class FluxExchangeScreen extends StatefulWidget {
 class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController toAmountController = TextEditingController();
-  bool isBridgeFlux = true;
+  SelectedButton selectedButton = SelectedButton.bridgeFlux;
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FluxSwapProvider>(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    return SingleChildScrollView(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(),
+          ),
+          Expanded(
+            flex: screenWidth < 600 ? 10 : 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 100),
+                const Text('Flux Exchange (Internal Only)',
+                    style: TextStyle(fontSize: 60, color: Colors.white)),
+                const StatusIndicator(),
+                const SizedBox(height: 20),
+                const Text('Swap Flux between networks with ease',
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                const SizedBox(height: 20),
+                const TotalSwapsDisplay(),
+                const SizedBox(height: 10),
+                buildButtons(),
+                const SizedBox(height: 10),
+                mainContent(provider),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(),
+          ),
+        ],
+      ),
+    );
+  }
 
+  Widget buildButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(
-          flex: 1,
-          child: Container(),
-        ),
-        SizedBox(
-          width: 825,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 100),
-              const Text('Flux Exchange (Internal Only)',
-                  style: TextStyle(fontSize: 60, color: Colors.white)),
-              const StatusIndicator(),
-              const SizedBox(height: 20),
-              const Text('Swap Flux between networks with ease',
-                  style: TextStyle(fontSize: 18, color: Colors.white)),
-              const SizedBox(height: 20),
-              const TotalSwapsDisplay(),
-              const SizedBox(height: 10),
-              mainContent(provider),
-            ],
+        Container(
+          padding: const EdgeInsets.all(5),
+          height: 40,
+          decoration: BoxDecoration(
+            color: selectedButton == SelectedButton.bridgeFlux
+                ? Colors.white
+                : Color.fromRGBO(151, 151, 151, 1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: TextButton(
+            onPressed: () {
+              setState(() {
+                selectedButton = SelectedButton.bridgeFlux;
+              });
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 5),
+            ),
+            child: Text(
+              'Bridge Flux',
+              style: TextStyle(
+                fontSize: 18,
+                color: selectedButton == SelectedButton.bridgeFlux
+                    ? Colors.black
+                    : Color.fromARGB(255, 206, 206, 206),
+              ),
+            ),
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: Container(),
+        SizedBox(width: 10),
+        Container(
+          padding: const EdgeInsets.all(5),
+          height: 40,
+          decoration: BoxDecoration(
+            color: selectedButton == SelectedButton.swapCrypto
+                ? Colors.white
+                : Color.fromRGBO(151, 151, 151, 1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: TextButton(
+            onPressed: () {
+              setState(() {
+                selectedButton = SelectedButton.swapCrypto;
+              });
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 5),
+            ),
+            child: Text(
+              'Swap Crypto',
+              style: TextStyle(
+                fontSize: 18,
+                color: selectedButton == SelectedButton.swapCrypto
+                    ? Colors.black
+                    : Color.fromARGB(255, 206, 206, 206),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        Container(
+          padding: const EdgeInsets.all(5),
+          height: 40,
+          decoration: BoxDecoration(
+            color: selectedButton == SelectedButton.search
+                ? Colors.white
+                : Color.fromRGBO(151, 151, 151, 1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: TextButton(
+            onPressed: () {
+              setState(() {
+                selectedButton = SelectedButton.search;
+              });
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 5),
+            ),
+            child: Text(
+              'Search / History',
+              style: TextStyle(
+                fontSize: 18,
+                color: selectedButton == SelectedButton.search
+                    ? Colors.black
+                    : Color.fromARGB(255, 206, 206, 206),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -81,109 +186,31 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 60, // Increase height here
-                  decoration: BoxDecoration(
-                    color: isBridgeFlux
-                        ? Colors.transparent
-                        : Color.fromRGBO(151, 151, 151, 1),
-                    borderRadius: const BorderRadius.only(
-                      topLeft:
-                          Radius.circular(10), // Radius for the top left corner
-                    ),
-                    border: isBridgeFlux
-                        ? null
-                        : const Border(
-                            bottom: BorderSide(
-                              color:
-                                  Colors.black, // Black border if not selected
-                              width: 1,
-                            ),
-                          ),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isBridgeFlux = true;
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors
-                          .transparent, // Background already handled by Container
-                      padding: EdgeInsets.symmetric(
-                          vertical: 20), // Increase padding for larger button
-                    ),
-                    child: Text(
-                      'Bridge Flux',
-                      style: TextStyle(
-                        fontSize: 18, // Increase font size
-                        color: isBridgeFlux
-                            ? Colors.black
-                            : Color.fromARGB(255, 206, 206, 206),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  height: 60, // Increase height here
-                  decoration: BoxDecoration(
-                    color: !isBridgeFlux
-                        ? Colors.transparent
-                        : Color.fromRGBO(151, 151, 151, 1),
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(
-                          10), // Radius for the top right corner
-                    ),
-                    border: !isBridgeFlux
-                        ? null
-                        : const Border(
-                            bottom: BorderSide(
-                              color:
-                                  Colors.black, // Black border if not selected
-                              width: 1,
-                            ),
-                          ),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isBridgeFlux = false;
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors
-                          .transparent, // Background already handled by Container
-                      padding: EdgeInsets.symmetric(
-                          vertical: 20), // Increase padding for larger button
-                    ),
-                    child: Text(
-                      'Swap Crypto',
-                      style: TextStyle(
-                        fontSize: 18, // Increase font size
-                        color: !isBridgeFlux
-                            ? Colors.black
-                            : Color.fromARGB(255, 206, 206, 206),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          isBridgeFlux ? bridgeFluxUI(provider) : swapCryptoUI(),
+          getSelectedUI(provider),
         ],
       ),
     );
   }
 
+  Widget getSelectedUI(FluxSwapProvider provider) {
+    switch (selectedButton) {
+      case SelectedButton.bridgeFlux:
+        return bridgeFluxUI(provider);
+      case SelectedButton.swapCrypto:
+        return swapCryptoUI();
+      case SelectedButton.search:
+        return searchhistoryUI(provider);
+      default:
+        return bridgeFluxUI(provider);
+    }
+  }
+
   Widget bridgeFluxUI(FluxSwapProvider provider) {
     if (provider.fShowSwapCard) {
-      return const SwapInfoCard();
+      return SwapInfoCard(
+        swapResponse: provider.swapToDisplay,
+        fSearch: false,
+      );
     } else if (provider.isReservedApproved && !provider.isReservedValid) {
       return AlertDialog(
         title: const Text('Reserve Failed to process'),
@@ -267,6 +294,17 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
         'Swap Crypto UI will be implemented later.',
         style: TextStyle(color: Colors.black),
       ),
+    );
+  }
+
+  Widget searchhistoryUI(FluxSwapProvider provider) {
+    return Container(
+      height: 550,
+      decoration: const BoxDecoration(
+        color: Color.fromRGBO(237, 237, 237, 1),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: const SearchHistory(),
     );
   }
 }

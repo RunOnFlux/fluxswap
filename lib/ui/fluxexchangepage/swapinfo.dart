@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluxswap/api/models/swap_model.dart';
 import 'package:fluxswap/constants/coin_details.dart';
 import 'package:fluxswap/constants/explorer_url_details.dart';
 import 'package:fluxswap/providers/flux_swap_provider.dart';
@@ -9,9 +10,18 @@ import 'package:fluxswap/utils/helpers.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SwapInfoCard extends StatelessWidget {
-  const SwapInfoCard({super.key});
+class SwapInfoCard extends StatefulWidget {
+  final SwapResponse swapResponse;
+  final bool fSearch;
 
+  const SwapInfoCard(
+      {super.key, required this.swapResponse, required this.fSearch});
+
+  @override
+  _SwapInfoCardState createState() => _SwapInfoCardState();
+}
+
+class _SwapInfoCardState extends State<SwapInfoCard> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FluxSwapProvider>(context);
@@ -21,7 +31,6 @@ class SwapInfoCard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           padding: const EdgeInsets.all(10),
-          width: 775, // Adapt to screen size
           decoration: const BoxDecoration(
               color: Color.fromRGBO(237, 237, 237, 1),
               borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -31,64 +40,61 @@ class SwapInfoCard extends StatelessWidget {
               Stack(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Swap ID: ${provider.swapToDisplay.id}',
+                            'ID: ${widget.swapResponse.id}',
                             style: const TextStyle(
-                                fontSize: 10, fontWeight: FontWeight.bold),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           IconButton(
-                            iconSize: 15,
+                            iconSize: 20,
                             icon: const Icon(Icons.content_copy_rounded),
                             onPressed: () => Clipboard.setData(
-                                ClipboardData(text: provider.swapToDisplay.id)),
+                                ClipboardData(text: widget.swapResponse.id)),
                           ),
                         ],
                       ),
+                      const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () {
-                          provider.fShowSwapCard = false;
+                          setState(() {
+                            if (widget.fSearch) {
+                              provider.fShowSearchedCard = false;
+                            } else {
+                              provider.fShowSwapCard = false;
+                            }
+                          });
                         },
                       ),
                     ],
                   ),
-                  const Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Fusion Swap Information",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
                 ],
               ),
               const Divider(),
-              _buildTransactionFlow(context),
+              _buildTransactionFlow(),
               const Divider(),
               _buildDetailRow(
-                  "Date: ${provider.dateFormat.format(DateTime.fromMillisecondsSinceEpoch(provider.swapToDisplay.timestamp).toLocal())}"),
+                  "Date: ${provider.dateFormat.format(DateTime.fromMillisecondsSinceEpoch(widget.swapResponse.timestamp).toLocal())}"),
               StatusUpdateWidget(
-                swapId: provider.swapToDisplay.id,
-                initialStatus: provider.swapToDisplay.status,
+                swapId: widget.swapResponse.id,
+                initialStatus: widget.swapResponse.status,
               ),
               const SizedBox(height: 40),
-              _buildCopyableRow(
-                  "Deposit TX ID: ${provider.swapToDisplay.txidFrom}",
-                  provider.swapToDisplay.txidFrom),
-              _buildCopyableRow(
-                  "To Address: ${provider.swapToDisplay.addressTo}",
-                  provider.swapToDisplay.addressTo),
-              _buildExplorerButton(context),
+              _buildCopyableRow("Deposit TX: ${widget.swapResponse.txidFrom}",
+                  widget.swapResponse.txidFrom),
+              _buildCopyableRow("To Address: ${widget.swapResponse.addressTo}",
+                  widget.swapResponse.addressTo),
+              _buildExplorerButton(),
               const SizedBox(height: 15),
-              _buildCloseButton(context),
+              _buildCloseButton(),
             ],
           ),
         ),
@@ -102,7 +108,11 @@ class SwapInfoCard extends StatelessWidget {
       children: [
         Text(text,
             style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+              overflow: TextOverflow.clip,
+            )),
       ],
     );
   }
@@ -111,8 +121,15 @@ class SwapInfoCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(text,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+        Expanded(
+          child: Text(
+            textAlign: TextAlign.center,
+            text,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            overflow: TextOverflow
+                .clip, // This ensures the text wraps to the next line
+          ),
+        ),
         IconButton(
           icon: const Icon(Icons.content_copy_rounded),
           onPressed: () => Clipboard.setData(ClipboardData(text: copyContent)),
@@ -121,8 +138,7 @@ class SwapInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildExplorerButton(BuildContext context) {
-    final provider = Provider.of<FluxSwapProvider>(context);
+  Widget _buildExplorerButton() {
     return SizedBox(
       width: 200,
       height: 30,
@@ -141,7 +157,7 @@ class SwapInfoCard extends StatelessWidget {
         ),
         onPressed: () {
           final String url =
-              "${Explorer_Urls[provider.swapToDisplay.chainFrom]}${provider.swapToDisplay.txidFrom}";
+              "${Explorer_Urls[widget.swapResponse.chainFrom]}${widget.swapResponse.txidFrom}";
           launchUrl(Uri.parse(url));
         },
         child: const Text("Show in explorer",
@@ -150,7 +166,7 @@ class SwapInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCloseButton(BuildContext context) {
+  Widget _buildCloseButton() {
     final provider = Provider.of<FluxSwapProvider>(context);
     return SizedBox(
       width: 200,
@@ -169,7 +185,13 @@ class SwapInfoCard extends StatelessWidget {
           )),
         ),
         onPressed: () {
-          provider.fShowSwapCard = false;
+          setState(() {
+            if (widget.fSearch) {
+              provider.fShowSearchedCard = false;
+            } else {
+              provider.fShowSwapCard = false;
+            }
+          });
         },
         child: const Text("Close",
             style: TextStyle(color: Colors.white, fontSize: 14)),
@@ -177,27 +199,31 @@ class SwapInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionFlow(BuildContext context) {
-    final provider = Provider.of<FluxSwapProvider>(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-            '${provider.swapToDisplay.expectedAmountFrom} ${getSwapNameFromApiName(provider.swapToDisplay.chainFrom)}',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        SvgPicture.asset(
-            '${Coin_Details[getSwapNameFromApiName(provider.swapToDisplay.chainFrom)]?.imageName}',
-            width: 80,
-            height: 80),
-        const Icon(Icons.arrow_right_alt, size: 40, color: Colors.green),
-        Text(
-            '${provider.swapToDisplay.expectedAmountTo} ${getSwapNameFromApiName(provider.swapToDisplay.chainTo)}',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        SvgPicture.asset(
-            '${Coin_Details[getSwapNameFromApiName(provider.swapToDisplay.chainTo)]?.imageName}',
-            width: 80,
-            height: 80),
-      ],
+  Widget _buildTransactionFlow() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+              '${widget.swapResponse.expectedAmountFrom} ${getSwapNameFromApiName(widget.swapResponse.chainFrom)}',
+              style:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          SvgPicture.asset(
+              '${Coin_Details[getSwapNameFromApiName(widget.swapResponse.chainFrom)]?.imageName}',
+              width: 50,
+              height: 50),
+          const Icon(Icons.arrow_right_alt, size: 40, color: Colors.green),
+          Text(
+              '${widget.swapResponse.expectedAmountTo} ${getSwapNameFromApiName(widget.swapResponse.chainTo)}',
+              style:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          SvgPicture.asset(
+              '${Coin_Details[getSwapNameFromApiName(widget.swapResponse.chainTo)]?.imageName}',
+              width: 50,
+              height: 50),
+        ],
+      ),
     );
   }
 }

@@ -13,75 +13,80 @@ class SearchSwap extends StatefulWidget {
 
 class _SearchSwapState extends State<SearchSwap> {
   bool _isFetching = false; // Local state to manage fetching status
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FluxSwapProvider>(context);
     return Container(
         padding: const EdgeInsets.all(10),
-        width: 250,
-        height: 50,
+        height: 100,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(10.0),
           color: const Color.fromARGB(255, 214, 214, 214),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.normal),
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "Swap ID",
-                      ),
-                      onChanged: (value) {
-                        provider.searchSwapID = value;
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Flux ID / Zel ID can\'t be blank';
-                        }
-                        return null;
-                      },
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                          controller: searchController,
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.normal),
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            labelText: "Swap ID",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.search),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  final swapID = searchController.text.trim();
+                                  if (swapID.isNotEmpty) {
+                                    _getSwapInfo(provider, true);
+                                  }
+                                }
+                              },
+                            ),
+                          ),
+                          onChanged: (value) {
+                            provider.searchSwapID = value;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Swap ID can\'t be blank';
+                            }
+                            return null;
+                          },
+                          onFieldSubmitted: (value) {
+                            if (_formKey.currentState!.validate()) {
+                              final swapID = searchController.text.trim();
+                              if (swapID.isNotEmpty) {
+                                _getSwapInfo(provider, true);
+                              }
+                            }
+                          }),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  _isFetching
-                      ? const CircularProgressIndicator()
-                      : ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: const MaterialStatePropertyAll(
-                                Color.fromARGB(255, 152, 149, 252)),
-                            shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(4),
-                                  bottomRight: Radius.circular(20),
-                                  bottomLeft: Radius.circular(4)),
-                            )),
-                          ),
-                          onPressed: () => _getSwapInfo(provider),
-                          child: const Text(
-                            "Search",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                ],
+                    const SizedBox(width: 10),
+                    if (_isFetching) const CircularProgressIndicator()
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ));
   }
 
-  void _getSwapInfo(FluxSwapProvider provider) async {
+  void _getSwapInfo(FluxSwapProvider provider, bool fForSearch) async {
     if (provider.searchSwapID.isNotEmpty) {
       setState(() {
         _isFetching = true; // Start fetching and show loader
@@ -91,8 +96,13 @@ class _SearchSwapState extends State<SearchSwap> {
             await SwapService.fetchSwapStatus(provider.searchSwapID);
         await Future.delayed(const Duration(seconds: 1)); // Simulate delay
         if (mounted) {
-          provider.swapToDisplay = swap;
-          provider.fShowSwapCard = true;
+          if (fForSearch) {
+            provider.searchToDisplay = swap;
+            provider.fShowSearchedCard = true;
+          } else {
+            provider.swapToDisplay = swap;
+            provider.fShowSwapCard = true;
+          }
         }
       } catch (e) {
         provider.addError(e.toString());

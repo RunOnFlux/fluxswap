@@ -66,7 +66,8 @@ class _TotalSwapsDisplayState extends State<TotalSwapsDisplay> {
         return const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Total Swaps Performed:   ', style: TextStyle(fontSize: 24)),
+            Text('Total Swaps Performed:   ',
+                style: TextStyle(fontSize: 24, color: Colors.white)),
             SizedBox(
               width: 20,
               height: 20,

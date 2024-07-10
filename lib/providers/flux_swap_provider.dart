@@ -220,6 +220,36 @@ class FluxSwapProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Used in testing, able to bypass initial page
+  bool _fShowSearchedCard = false;
+
+  // Details to show when fShowSwapCard = true
+  SwapResponse _searchToDisplay = SwapResponse(
+      id: "66325ae0ffb95a575f0bf4a4",
+      chainFrom: "bsc",
+      chainTo: "matic",
+      addressFrom: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
+      addressTo: "0x9eb494403e8f2dff389fa2e64b63d888bbd97860",
+      expectedAmountFrom: 15,
+      expectedAmountTo: 12,
+      txidFrom:
+          "0x15179093bf68a23a621a6e1a3f5bc02bf5dfa7a422dbd71c1252aaf298a2b670",
+      fee: 3,
+      timestamp: 1714498454333,
+      status: "hold");
+
+  bool get fShowSearchedCard => _fShowSearchedCard;
+  set fShowSearchedCard(bool value) {
+    _fShowSearchedCard = value;
+    notifyListeners();
+  }
+
+  SwapResponse get searchToDisplay => _searchToDisplay;
+  set searchToDisplay(SwapResponse value) {
+    _searchToDisplay = value;
+    notifyListeners();
+  }
+
   SwapResponse swapResponse = SwapResponse();
   bool _isSwapCreated = false;
   bool _isSwapValid = false;
