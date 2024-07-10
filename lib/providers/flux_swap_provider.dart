@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_web3/flutter_web3.dart';
 import 'package:fluxswap/constants/coin_details.dart';
@@ -15,6 +17,7 @@ import 'package:fluxswap/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:web3modal_flutter/web3modal_flutter.dart';
 // import 'package:web3dart/web3dart.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:intl/intl.dart';
 
@@ -218,6 +221,59 @@ class FluxSwapProvider extends ChangeNotifier {
   set swapToDisplay(SwapResponse value) {
     _swapToDisplay = value;
     notifyListeners();
+  }
+
+  List<SwapResponse> _swapHistory = [];
+  List<SwapResponse> get swapHistory => _swapHistory;
+  set swapHistory(List<SwapResponse> value) {
+    _swapHistory = value;
+    notifyListeners();
+  }
+
+  String _searchedFluxId = "";
+  String get searchedFluxId => _searchedFluxId;
+  set searchedFluxId(String value) {
+    _searchedFluxId = value;
+    notifyListeners();
+  }
+
+  Future<void> fetchHistory(String zelid) async {
+    try {
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'zelid': zelid,
+      };
+
+      const url = 'https://fusion.runonflux.io/swap/userhistory';
+      final response = await http.get(Uri.parse(url), headers: headers);
+
+      if (response.statusCode == 200) {
+        searchedFluxId = zelid;
+        List<dynamic> jsonList = json.decode(response.body)['data'];
+        swapHistory = jsonList
+            .map((jsonItem) => SwapResponse.fromJson(jsonItem))
+            .toList()
+            .reversed
+            .toList();
+        notifyListeners();
+      } else {
+        throw Exception('Failed to load swap history');
+      }
+    } catch (e) {
+      print('Failed to fetch swap history: $e');
+    }
+  }
+
+  Future<void> fetchSwapInfo(String swapID) async {
+    try {
+      SwapResponse swap = await SwapService.fetchSwapStatus(swapID);
+      await Future.delayed(const Duration(seconds: 1)); // Simulate delay
+      searchToDisplay = swap;
+      fShowSearchedCard = true;
+      notifyListeners();
+    } catch (e) {
+      print('Failed to fetch swap info: $e');
+    }
   }
 
   // Used in testing, able to bypass initial page

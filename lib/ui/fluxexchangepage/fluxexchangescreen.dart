@@ -14,10 +14,6 @@ import 'package:fluxswap/ui/fluxexchangepage/zelidbox/zelidfield.dart';
 import 'package:fluxswap/ui/fluxswapstats/totalswaps.dart';
 import 'package:fluxswap/utils/helpers.dart';
 
-import 'searchswap.dart';
-
-enum SelectedButton { bridgeFlux, swapCrypto, search }
-
 class FluxExchangeScreen extends StatefulWidget {
   const FluxExchangeScreen({super.key});
 
@@ -28,7 +24,8 @@ class FluxExchangeScreen extends StatefulWidget {
 class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController toAmountController = TextEditingController();
-  SelectedButton selectedButton = SelectedButton.bridgeFlux;
+  PageController _pageController = PageController();
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -76,96 +73,54 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          padding: const EdgeInsets.all(5),
-          height: 40,
-          decoration: BoxDecoration(
-            color: selectedButton == SelectedButton.bridgeFlux
-                ? Colors.white
-                : Color.fromRGBO(151, 151, 151, 1),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                selectedButton = SelectedButton.bridgeFlux;
-              });
-            },
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 5),
-            ),
-            child: Text(
-              'Bridge Flux',
-              style: TextStyle(
-                fontSize: 18,
-                color: selectedButton == SelectedButton.bridgeFlux
-                    ? Colors.black
-                    : Color.fromARGB(255, 206, 206, 206),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: 10),
-        Container(
-          padding: const EdgeInsets.all(5),
-          height: 40,
-          decoration: BoxDecoration(
-            color: selectedButton == SelectedButton.swapCrypto
-                ? Colors.white
-                : Color.fromRGBO(151, 151, 151, 1),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                selectedButton = SelectedButton.swapCrypto;
-              });
-            },
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 5),
-            ),
-            child: Text(
-              'Swap Crypto',
-              style: TextStyle(
-                fontSize: 18,
-                color: selectedButton == SelectedButton.swapCrypto
-                    ? Colors.black
-                    : Color.fromARGB(255, 206, 206, 206),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: 10),
-        Container(
-          padding: const EdgeInsets.all(5),
-          height: 40,
-          decoration: BoxDecoration(
-            color: selectedButton == SelectedButton.search
-                ? Colors.white
-                : Color.fromRGBO(151, 151, 151, 1),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                selectedButton = SelectedButton.search;
-              });
-            },
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 5),
-            ),
-            child: Text(
-              'Search / History',
-              style: TextStyle(
-                fontSize: 18,
-                color: selectedButton == SelectedButton.search
-                    ? Colors.black
-                    : Color.fromARGB(255, 206, 206, 206),
-              ),
-            ),
-          ),
-        ),
+        buildButton('Bridge Flux', 0),
+        const SizedBox(width: 10),
+        buildButton('Swap Crypto', 1),
+        const SizedBox(width: 10),
+        buildButton('Search / History', 2),
       ],
+    );
+  }
+
+  Widget buildButton(String title, int index) {
+    return Container(
+      padding: const EdgeInsets.all(5),
+      height: 40,
+      decoration: BoxDecoration(
+        color: selectedIndex == index
+            ? Colors.white
+            : const Color.fromRGBO(151, 151, 151, 1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            selectedIndex = index;
+            int pageDifference = (index - _pageController.page!.toInt()).abs();
+            if (pageDifference > 1) {
+              _pageController.jumpToPage(index);
+            } else {
+              _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }
+          });
+        },
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            color: selectedIndex == index
+                ? Colors.black
+                : const Color.fromARGB(255, 206, 206, 206),
+          ),
+        ),
+      ),
     );
   }
 
@@ -177,32 +132,30 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
   Widget buildFormContainer(FluxSwapProvider provider) {
     return Container(
       decoration: BoxDecoration(
-        color: Color.fromRGBO(255, 255, 255, 1),
+        color: const Color.fromRGBO(255, 255, 255, 1),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: Colors.black, // Light white border
           width: 1,
         ),
       ),
-      child: Column(
-        children: [
-          getSelectedUI(provider),
-        ],
+      child: SizedBox(
+        height: 600, // Set a fixed height for the container
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              selectedIndex = index;
+            });
+          },
+          children: [
+            bridgeFluxUI(provider),
+            swapCryptoUI(),
+            searchhistoryUI(provider),
+          ],
+        ),
       ),
     );
-  }
-
-  Widget getSelectedUI(FluxSwapProvider provider) {
-    switch (selectedButton) {
-      case SelectedButton.bridgeFlux:
-        return bridgeFluxUI(provider);
-      case SelectedButton.swapCrypto:
-        return swapCryptoUI();
-      case SelectedButton.search:
-        return searchhistoryUI(provider);
-      default:
-        return bridgeFluxUI(provider);
-    }
   }
 
   Widget bridgeFluxUI(FluxSwapProvider provider) {
@@ -289,7 +242,7 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
 
   Widget swapCryptoUI() {
     // Placeholder for Swap Crypto UI
-    return Center(
+    return const Center(
       child: Text(
         'Swap Crypto UI will be implemented later.',
         style: TextStyle(color: Colors.black),

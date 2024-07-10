@@ -1,17 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluxswap/api/services/swap_service.dart';
 import 'package:fluxswap/constants/coin_details.dart';
-import 'package:fluxswap/ui/fluxexchangepage/swapinfo.dart';
-import 'package:fluxswap/utils/helpers.dart';
-import 'package:fluxswap/api/models/swap_model.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:provider/provider.dart';
-import 'dart:async';
+import 'package:fluxswap/api/models/swap_model.dart';
 import 'package:fluxswap/providers/flux_swap_provider.dart';
 import 'package:fluxswap/utils/address_validator.dart';
+import 'package:fluxswap/utils/helpers.dart';
+import 'package:fluxswap/ui/fluxexchangepage/swapinfo.dart';
 
 class SearchHistory extends StatefulWidget {
   const SearchHistory({super.key});
@@ -21,9 +19,6 @@ class SearchHistory extends StatefulWidget {
 }
 
 class _SearchHistoryState extends State<SearchHistory> {
-  List<SwapResponse> swapHistory = [];
-  bool isLoading = false;
-  String lastFetchedZelid = '';
   Timer? periodicTimer;
   TextEditingController searchController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -34,10 +29,10 @@ class _SearchHistoryState extends State<SearchHistory> {
     super.initState();
     // Set up a periodic fetch every 5 minutes
     periodicTimer = Timer.periodic(const Duration(minutes: 5), (timer) {
-      final zelid =
-          Provider.of<FluxSwapProvider>(context, listen: false).fluxID;
-      if (zelid.isNotEmpty && zelid != lastFetchedZelid) {
-        fetchHistory(zelid);
+      final provider = Provider.of<FluxSwapProvider>(context, listen: false);
+      final zelid = provider.fluxID;
+      if (zelid.isNotEmpty) {
+        provider.fetchHistory(zelid);
       }
     });
   }
@@ -45,9 +40,10 @@ class _SearchHistoryState extends State<SearchHistory> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final zelid = Provider.of<FluxSwapProvider>(context).fluxID;
-    if (zelid.isNotEmpty && zelid != lastFetchedZelid) {
-      fetchHistory(zelid);
+    final provider = Provider.of<FluxSwapProvider>(context);
+    final zelid = provider.fluxID;
+    if (zelid.isNotEmpty) {
+      provider.fetchHistory(zelid);
     }
   }
 
@@ -58,74 +54,14 @@ class _SearchHistoryState extends State<SearchHistory> {
     super.dispose();
   }
 
-  Future<void> fetchHistory(String zelid) async {
-    setState(() {
-      isLoading = true;
-      lastFetchedZelid = zelid; // Update the last fetched zelid
-    });
-
-    try {
-      Map<String, String> headers = {
-        'Content-Type': 'application/json',
-        'zelid': zelid,
-      };
-
-      const url = 'https://fusion.runonflux.io/swap/userhistory';
-      final response = await http.get(Uri.parse(url), headers: headers);
-
-      if (response.statusCode == 200) {
-        List<dynamic> jsonList = json.decode(response.body)['data'];
-        setState(() {
-          swapHistory = jsonList
-              .map((jsonItem) => SwapResponse.fromJson(jsonItem))
-              .toList()
-              .reversed
-              .toList();
-          isLoading = false;
-        });
-      } else {
-        throw Exception('Failed to load swap history');
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      print('Failed to fetch swap history: $e');
-    }
-  }
-
-  Future<void> fetchSwapInfo(String swapID) async {
-    setState(() {
-      _isFetching = true; // Start fetching and show loader
-    });
-
-    try {
-      SwapResponse swap = await SwapService.fetchSwapStatus(swapID);
-      await Future.delayed(const Duration(seconds: 1)); // Simulate delay
-      if (mounted) {
-        Provider.of<FluxSwapProvider>(context, listen: false).searchToDisplay =
-            swap;
-        Provider.of<FluxSwapProvider>(context, listen: false)
-            .fShowSearchedCard = true;
-      }
-    } catch (e) {
-      print('Failed to fetch swap info: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isFetching = false; // Stop fetching and show button again
-        });
-      }
-    }
-  }
-
   void handleSearch() {
     if (_formKey.currentState!.validate()) {
       final input = searchController.text.trim();
+      final provider = Provider.of<FluxSwapProvider>(context, listen: false);
       if (isValidBitcoinAddress(input) || isValidEthereumAddress(input)) {
-        fetchHistory(input);
+        provider.fetchHistory(input);
       } else {
-        fetchSwapInfo(input);
+        provider.fetchSwapInfo(input);
       }
     }
   }
@@ -181,24 +117,24 @@ class _SearchHistoryState extends State<SearchHistory> {
                   ),
                 ),
               ),
-              if (lastFetchedZelid.isNotEmpty)
+              if (provider.searchedFluxId.isNotEmpty)
                 Text(
-                  lastFetchedZelid,
+                  provider.searchedFluxId,
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
                   ),
                 ),
               const Divider(color: Colors.black),
-              if (!swapHistory.isEmpty)
+              if (provider.swapHistory.isNotEmpty)
                 Text(
-                  'Swaps: ${swapHistory.length}',
+                  'Swaps: ${provider.swapHistory.length}',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
                   ),
                 ),
-              if (provider.fluxID.isEmpty && swapHistory.isEmpty)
+              if (provider.fluxID.isEmpty && provider.swapHistory.isEmpty)
                 const Expanded(
                   child: Center(
                     child: Text("No History Available"),
@@ -207,7 +143,7 @@ class _SearchHistoryState extends State<SearchHistory> {
               else
                 Expanded(
                   child: ListView.builder(
-                    itemCount: swapHistory.length,
+                    itemCount: provider.swapHistory.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         margin: const EdgeInsets.all(8),
@@ -227,12 +163,10 @@ class _SearchHistoryState extends State<SearchHistory> {
                         ),
                         child: InkWell(
                           onTap: () {
-                            provider.searchToDisplay = swapHistory[index];
+                            provider.searchToDisplay =
+                                provider.swapHistory[index];
                             provider.fShowSearchedCard = true;
-                            setState(() {
-                              // _swapInfo = swapHistory[index];
-                              // _showSwapInfoCard = true; // Show the SwapInfoCard
-                            });
+                            setState(() {});
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,7 +178,8 @@ class _SearchHistoryState extends State<SearchHistory> {
                                   Text(
                                     provider.dateFormat.format(
                                         DateTime.fromMillisecondsSinceEpoch(
-                                                swapHistory[index].timestamp)
+                                                provider.swapHistory[index]
+                                                    .timestamp)
                                             .toLocal()),
                                     style: const TextStyle(
                                       fontSize: 10,
@@ -257,7 +192,8 @@ class _SearchHistoryState extends State<SearchHistory> {
                                         size: 20),
                                     onPressed: () {
                                       Clipboard.setData(ClipboardData(
-                                          text: swapHistory[index].id));
+                                          text:
+                                              provider.swapHistory[index].id));
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
@@ -268,25 +204,25 @@ class _SearchHistoryState extends State<SearchHistory> {
                                     },
                                   ),
                                   Text(
-                                    swapHistory[index].id,
+                                    provider.swapHistory[index].id,
                                   ),
                                 ],
                               ),
                               Row(
                                 children: [
                                   Text(
-                                      '${swapHistory[index].expectedAmountFrom} ${getSwapNameFromApiName(swapHistory[index].chainFrom)}'),
+                                      '${provider.swapHistory[index].expectedAmountFrom} ${getSwapNameFromApiName(provider.swapHistory[index].chainFrom)}'),
                                   SvgPicture.asset(
-                                      '${Coin_Details[getSwapNameFromApiName(swapHistory[index].chainFrom)]?.imageName}'),
+                                      '${Coin_Details[getSwapNameFromApiName(provider.swapHistory[index].chainFrom)]?.imageName}'),
                                   const Icon(Icons.arrow_right_alt,
                                       size: 40, color: Colors.green),
                                   Text(
-                                      '${swapHistory[index].expectedAmountTo} ${getSwapNameFromApiName(swapHistory[index].chainTo)}'),
+                                      '${provider.swapHistory[index].expectedAmountTo} ${getSwapNameFromApiName(provider.swapHistory[index].chainTo)}'),
                                   SvgPicture.asset(
-                                      '${Coin_Details[getSwapNameFromApiName(swapHistory[index].chainTo)]?.imageName}'),
+                                      '${Coin_Details[getSwapNameFromApiName(provider.swapHistory[index].chainTo)]?.imageName}'),
                                   const Spacer(),
                                   Text(
-                                    'Status: ${swapHistory[index].status}',
+                                    'Status: ${provider.swapHistory[index].status}',
                                   ),
                                 ],
                               ),
@@ -300,11 +236,11 @@ class _SearchHistoryState extends State<SearchHistory> {
             ],
           ),
         ),
-        if (_isFetching || isLoading)
+        if (_isFetching)
           Positioned.fill(
             child: Container(
               color: Colors.black54,
-              child: const Center(
+              child: Center(
                 child: CircularProgressIndicator(),
               ),
             ),
