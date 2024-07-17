@@ -1,4 +1,5 @@
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluxswap/providers/crypto_swap_provider.dart';
 import 'package:fluxswap/ui/fluxexchangepage/fluxexchangescreen.dart';
 import 'package:fluxswap/ui/web3/walletdrawer.dart';
 import 'package:fluxswap/ui/web3/networkselectionmenu.dart';
@@ -16,10 +17,17 @@ class CryptoSwapApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Crypto Swap Demo',
-      theme: ThemeData.light(),
-      home: const CryptoSwapPage(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => FluxSwapProvider()..init()),
+        ChangeNotifierProvider(
+            create: (context) => CryptoSwapProvider()..init()),
+      ],
+      child: MaterialApp(
+        title: 'Crypto Swap Demo',
+        theme: ThemeData.light(),
+        home: const CryptoSwapPage(),
+      ),
     );
   }
 }
@@ -52,102 +60,97 @@ class _CryptoSwapPageState extends State<CryptoSwapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => FluxSwapProvider()..init(),
-      builder: (context, child) {
-        return Scaffold(
-          key: _scaffoldKey,
-          endDrawer: const WalletDrawer(),
-          body: Consumer<FluxSwapProvider>(builder: (context, provider, child) {
-            // Listen for errors and show them as they appear
-            if (provider.errors.isNotEmpty) {
-              Future.microtask(
-                  () => _showErrorSnackbar(context, provider.errors.last));
-            }
+    return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const WalletDrawer(),
+      body: Consumer<FluxSwapProvider>(builder: (context, provider, child) {
+        // Listen for errors and show them as they appear
+        if (provider.errors.isNotEmpty) {
+          Future.microtask(
+              () => _showErrorSnackbar(context, provider.errors.last));
+        }
 
-            return SingleChildScrollView(
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                child: Stack(
-                  alignment: Alignment.topLeft,
-                  children: [
-                    Positioned.fill(
-                      child: Image.asset(
-                        'assets/images/background2.png', // Path to your background SVG file
-                        fit: BoxFit
-                            .cover, // Ensures the SVG covers the entire screen
-                      ),
-                    ),
-                    Positioned(
-                      top: 100,
-                      left: 0,
-                      right: 0,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          width: 500,
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          padding: const EdgeInsets.all(12.0),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.warning, color: Colors.white),
-                              SizedBox(width: 8.0),
-                              Expanded(
-                                child: Text(
-                                  'Verify you are on the website: https://swap.runonflux.io',
-                                  style: TextStyle(color: Colors.white),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                        top: 0,
-                        left: 0,
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/flux-icon.svg',
-                              width: 80,
-                              height: 80,
-                            ),
-                            const Text(
-                              "Flux",
-                              style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                          ],
-                        )),
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: NetworkSelectionMenu(
-                        scaffoldKey: _scaffoldKey,
-                      ),
-                    ),
-                    const Positioned.fill(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 80), // Adjust padding to avoid overlap
-                        child: FluxExchangeScreen(),
-                      ),
-                    ),
-                  ],
+        return SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            child: Stack(
+              alignment: Alignment.topLeft,
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/background2.png', // Path to your background SVG file
+                    fit: BoxFit
+                        .cover, // Ensures the SVG covers the entire screen
+                  ),
                 ),
-              ),
-            );
-          }),
+                Positioned(
+                  top: 100,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: 500,
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.warning, color: Colors.white),
+                          SizedBox(width: 8.0),
+                          Expanded(
+                            child: Text(
+                              'Verify you are on the website: https://swap.runonflux.io',
+                              style: TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                    top: 0,
+                    left: 0,
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/flux-icon.svg',
+                          width: 80,
+                          height: 80,
+                        ),
+                        const Text(
+                          "Flux",
+                          style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ],
+                    )),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: NetworkSelectionMenu(
+                    scaffoldKey: _scaffoldKey,
+                  ),
+                ),
+                const Positioned.fill(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 80), // Adjust padding to avoid overlap
+                    child: FluxExchangeScreen(),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
-      },
+      }),
     );
   }
 

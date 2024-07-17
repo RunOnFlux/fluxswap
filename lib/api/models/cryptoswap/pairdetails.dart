@@ -24,14 +24,14 @@ class ExchangeDetail {
 
   factory ExchangeDetail.fromJson(Map<String, dynamic> json) {
     return ExchangeDetail(
-      exchangeId: json['exchangeId'],
-      minSellAmount: json['minSellAmount'],
-      maxSellAmount: json['maxSellAmount'],
-      rate: json['rate'],
-      precision: json['precision'],
-      sellAmount: json['sellAmount'],
-      buyAmount: json['buyAmount'],
-      rateId: json['rateId'],
+      exchangeId: json['exchangeId'] ?? '',
+      minSellAmount: json['minSellAmount'] ?? '',
+      maxSellAmount: json['maxSellAmount'] ?? '',
+      rate: json['rate'] ?? '',
+      precision: json['precision'] ?? '',
+      sellAmount: json['sellAmount'] as String?,
+      buyAmount: json['buyAmount'] as String?,
+      rateId: json['rateId'] as String?,
     );
   }
 

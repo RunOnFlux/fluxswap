@@ -81,18 +81,8 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/images/MetaMask_Fox.png
-    - assets/images/zel-flux-logo.png
-    - assets/images/background2.png
-    - assets/images/avax-icon.svg
-    - assets/images/background.svg
-    - assets/images/base-icon.svg
-    - assets/images/bnb-icon.svg
-    - assets/images/eth-icon.svg
-    - assets/images/flux-icon.svg
-    - assets/images/metamask-icon.svg
-    - assets/images/polygon-icon.svg
-    - assets/images/walletconnect-icon.svg
+    - assets/logos/
+    - assets/logos/Exchanges/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

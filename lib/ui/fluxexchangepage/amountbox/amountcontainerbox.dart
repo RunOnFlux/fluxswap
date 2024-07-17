@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluxswap/ui/fluxexchangepage/amountbox/currencyselector.dart';
+import 'package:fluxswap/ui/fluxexchangepage/amountbox/bridgecurrencyselector.dart';
 import 'package:fluxswap/ui/fluxexchangepage/amountbox/inputamountfield.dart'; // Ensure this import is correct and the file exists
 
 class AmountContainer extends StatefulWidget {

@@ -4,11 +4,11 @@ class Asset {
   final String name;
   final String chain;
   final String? contract;
-  final String idsimpleswapfloat;
-  final List<String> idsimpleswapfloatlimit;
+  final String? idsimpleswapfloat; // Rate and change based on trade
+  final List<String>? idsimpleswapfloatlimit; //
   final String? idchangellyfloat;
   final List<String>? idchangellyfloatlimit;
-  final String? idchangellyfix;
+  final String? idchangellyfix; // Rate is fixed, and number is more accurate
   final List<String>? idchangellyfixlimit;
   final String? idchangenowfloat;
   final List<String>? idchangenowfloatlimit;
@@ -23,8 +23,8 @@ class Asset {
     required this.name,
     required this.chain,
     this.contract,
-    required this.idsimpleswapfloat,
-    required this.idsimpleswapfloatlimit,
+    this.idsimpleswapfloat,
+    this.idsimpleswapfloatlimit,
     this.idchangellyfloat,
     this.idchangellyfloatlimit,
     this.idchangellyfix,
@@ -45,7 +45,9 @@ class Asset {
       chain: json['chain'],
       contract: json['contract'],
       idsimpleswapfloat: json['idsimpleswapfloat'],
-      idsimpleswapfloatlimit: List<String>.from(json['idsimpleswapfloatlimit']),
+      idsimpleswapfloatlimit: json['idsimpleswapfloatlimit'] != null
+          ? List<String>.from(json['idsimpleswapfloatlimit'])
+          : [],
       idchangellyfloat: json['idchangellyfloat'],
       idchangellyfloatlimit: json['idchangellyfloatlimit'] != null
           ? List<String>.from(json['idchangellyfloatlimit'])
@@ -89,5 +91,31 @@ class Asset {
       'idsimpleswapfix': idsimpleswapfix,
       'idsimpleswapfixlimit': idsimpleswapfixlimit,
     };
+  }
+
+  static Asset nullAsset() {
+    return Asset(
+      idzelcore: '',
+      ticker: '',
+      name: '',
+      chain: '',
+      contract: null,
+      idsimpleswapfloat: null,
+      idsimpleswapfloatlimit: null,
+      idchangellyfloat: null,
+      idchangellyfloatlimit: null,
+      idchangellyfix: null,
+      idchangellyfixlimit: null,
+      idchangenowfloat: null,
+      idchangenowfloatlimit: null,
+      idchangenowfix: null,
+      idchangenowfixlimit: null,
+      idsimpleswapfix: null,
+      idsimpleswapfixlimit: null,
+    );
+  }
+
+  bool get isNull {
+    return idzelcore.isEmpty && ticker.isEmpty && name.isEmpty && chain.isEmpty;
   }
 }

@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:fluxswap/api/models/cryptoswap/asset.dart';
+import 'package:fluxswap/api/models/cryptoswap/swapasset.dart';
 import 'package:fluxswap/api/models/cryptoswap/createswap.dart';
 import 'package:fluxswap/api/models/cryptoswap/exchangedetails.dart';
-import 'package:fluxswap/api/models/cryptoswap/history.dart';
+import 'package:fluxswap/api/models/cryptoswap/swaphistory.dart';
 import 'package:fluxswap/api/models/cryptoswap/pairdetails.dart';
 import 'package:fluxswap/api/models/cryptoswap/swapstatus.dart';
 import 'package:http/http.dart' as http;

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluxswap/api/models/reserve_model.dart';
+import 'package:fluxswap/providers/crypto_swap_provider.dart';
+import 'package:fluxswap/ui/cryptoswappage/cryptoswapamount.dart';
+import 'package:fluxswap/ui/cryptoswappage/exchangebutton.dart';
+import 'package:fluxswap/ui/cryptoswappage/rateselector.dart';
 import 'package:fluxswap/ui/fluxexchangepage/swaphistory.dart';
 import 'package:provider/provider.dart';
 import 'package:fluxswap/providers/flux_swap_provider.dart';
@@ -242,11 +246,35 @@ class _FluxExchangeScreenState extends State<FluxExchangeScreen> {
 
   Widget swapCryptoUI() {
     // Placeholder for Swap Crypto UI
-    return const Center(
-      child: Text(
-        'Swap Crypto UI will be implemented later.',
-        style: TextStyle(color: Colors.black),
-      ),
+    final cryptoSwapProvider = Provider.of<CryptoSwapProvider>(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight;
+        final width = constraints.maxWidth;
+
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: height * 0.025,
+              left: width * 0.1,
+              right: width * 0.1,
+              bottom: height * 0.1,
+            ),
+            child: Column(
+              children: [
+                SizedBox(height: 16),
+                AssetSelectionWidget(isSellAsset: true),
+                SizedBox(height: 16),
+                RateSelector(),
+                SizedBox(height: 16),
+                AssetSelectionWidget(isSellAsset: false),
+                SizedBox(height: 16),
+                ExchangeButtonWidget(),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

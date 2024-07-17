@@ -8,6 +8,7 @@ class CreateSwapRequest {
   final String sellAmount;
   final String buyAddress;
   final String refundAddress;
+  final String? rateId;
 
   CreateSwapRequest({
     required this.exchangeId,
@@ -16,6 +17,7 @@ class CreateSwapRequest {
     required this.sellAmount,
     required this.buyAddress,
     required this.refundAddress,
+    this.rateId,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +28,7 @@ class CreateSwapRequest {
       'sellAmount': sellAmount,
       'buyAddress': buyAddress,
       'refundAddress': refundAddress,
+      'rateid': rateId
     };
   }
 }
